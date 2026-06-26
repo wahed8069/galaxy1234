@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Galaxy Ventures | Premium UAE Recruitment & Job Consultancy</title>
+  <meta name="description" content="Connecting elite global talent with premium companies across Dubai, Abu Dhabi, and the wider UAE. Executive search, contract staffing, and career advisory.">
+  <meta name="keywords" content="recruitment agency dubai, job consultancy uae, headhunters abu dhabi, executive search dubai, employment agency uae, clinical license clearance dubai, tech jobs dubai">
+  <link rel="canonical" href="https://galaxyventures.com/">
+  
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://galaxyventures.com/">
+  <meta property="og:title" content="Galaxy Ventures | Premium UAE Recruitment & Job Consultancy">
+  <meta property="og:description" content="Connecting elite global talent with premium companies across Dubai, Abu Dhabi, and the wider UAE. Vetted job listings, compliance vetting, and executive search.">
+  <meta property="og:image" content="https://galaxyventures.com/logo.png">
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content="https://galaxyventures.com/">
+  <meta property="twitter:title" content="Galaxy Ventures | Premium UAE Recruitment & Job Consultancy">
+  <meta property="twitter:description" content="Connecting elite global talent with premium companies across Dubai, Abu Dhabi, and the wider UAE. Vetted job listings, compliance vetting, and executive search.">
+  <meta property="twitter:image" content="https://galaxyventures.com/logo.png">
+
+  <!-- JSON-LD Schema Markup -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "RecruitmentAgency",
+    "name": "Galaxy Ventures",
+    "image": "https://galaxyventures.com/logo.png",
+    "@id": "https://galaxyventures.com/#organization",
+    "url": "https://galaxyventures.com/",
+    "telephone": "+97144567890",
+    "priceRange": "$$$",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Level 14, Marina Plaza, Dubai Marina",
+      "addressLocality": "Dubai",
+      "addressCountry": "AE"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": 25.0772,
+      "longitude": 55.1396
+    },
+    "openingHoursSpecification": {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday"
+      ],
+      "opens": "09:00",
+      "closes": "18:00"
+    },
+    "sameAs": [
+      "https://www.linkedin.com/company/galaxy-ventures-talent"
+    ]
+  }
+  </script>
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- TOP NOTIFICATION BANNER -->
+  <div class="notification-banner" id="notif-banner">
+    <svg style="width:20px;height:20px;color:var(--electric-cyan);flex-shrink:0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+    <span id="notif-text">Notification message</span>
+  </div>
+
+  <!-- HEADER & NAVIGATION -->
+  <header>
+    <div class="container header-container">
+      <a href="#" onclick="event.preventDefault(); navigateTo('home');" class="logo">
+        <div class="planet-logo-icon flex-center">
+          <span class="planet-logo-core"></span>
+        </div>
+        <span>Galaxy Ventures</span>
+      </a>
+      
+      <nav id="navbar-links">
+        <span class="nav-link active" data-page="home">Home</span>
+        <span class="nav-link" data-page="about">About</span>
+        <span class="nav-link" data-page="jobs">Jobs</span>
+        <span class="nav-link" data-page="employers">Employers</span>
+        <span class="nav-link" data-page="candidates">Candidates</span>
+        <span class="nav-link" data-page="contact">Contact</span>
+      </nav>
+
+      <div class="header-actions">
+        <button class="btn btn-find-jobs" onclick="navigateTo('jobs')">Find jobs</button>
+        <button class="btn btn-hire-talent" onclick="handleHireTalentClick()">Hire talent</button>
+        
+        <!-- Mobile menu toggle -->
+        <div class="mobile-toggle" onclick="document.getElementById('navbar-links').classList.toggle('open')">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN DYNAMIC CONTENT CONTAINER -->
+  <main id="main-content" style="min-height: 80vh;">
+    <!-- Rendered dynamically by app.js -->
+  </main>
+
+  <!-- GLOBAL FOOTER -->
+  <footer>
+    <div class="container grid-4">
+      <div>
+        <div class="footer-logo">
+          <div class="planet-logo-icon flex-center" style="width:28px; height:28px; border-width:2px;">
+            <span class="planet-logo-core" style="width:6px; height:6px;"></span>
+          </div>
+          <span>Galaxy Ventures</span>
+        </div>
+        <p style="font-size:0.85rem; margin-bottom:1rem;">Galaxy Ventures connects exceptional global professionals with industry-leading firms in the UAE. Vetted roles, automated screening, and dedicated human consultancy.</p>
+        <p style="font-size:0.8rem; color:rgba(255,255,255,0.4); cursor:pointer;" onclick="openAdminLoginModal()">MOHRE Recruitment License No: 10928/2016 • Admin Login</p>
+      </div>
+      <div>
+        <h4 class="footer-col-title">Quick Links</h4>
+        <ul class="footer-links">
+          <li><a href="#" onclick="event.preventDefault(); navigateTo('home')">Home</a></li>
+          <li><a href="#" onclick="event.preventDefault(); navigateTo('about')">Company Story</a></li>
+          <li><a href="#" onclick="event.preventDefault(); navigateTo('jobs')">Search Jobs</a></li>
+          <li><a href="#" onclick="event.preventDefault(); navigateTo('contact')">Connect Offices</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="footer-col-title">Sectors We Fill</h4>
+        <ul class="footer-links">
+          <li><a href="#" onclick="event.preventDefault(); navigateTo('jobs')">IT & Tech Infrastructure</a></li>
+          <li><a href="#" onclick="event.preventDefault(); navigateTo('jobs')">DHA Licensed Healthcare</a></li>
+          <li><a href="#" onclick="event.preventDefault(); navigateTo('jobs')">Site Civil Engineering</a></li>
+          <li><a href="#" onclick="event.preventDefault(); navigateTo('jobs')">Corporate Finance & Banking</a></li>
+          <li><a href="#" onclick="event.preventDefault(); navigateTo('jobs')">Logistics & Sea Freight</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="footer-col-title">UAE Advisory Bulletin</h4>
+        <p style="font-size:0.85rem; margin-bottom:0.5rem;">Subscribe to receive critical updates on Golden Visas, corporate taxes, and UAE labor law mandates.</p>
+        <form class="newsletter-form" onsubmit="event.preventDefault(); showNotification('Subscribed successfully to newsletter!'); this.reset();">
+          <input type="email" placeholder="name@domain.com" required>
+          <button type="submit" class="btn btn-accent" style="padding:0.5rem 1rem; font-size:0.8rem;">Subscribe</button>
+        </form>
+      </div>
+    </div>
+    <div class="container footer-bottom flex-between">
+      <p>&copy; 2026 Galaxy Ventures. All rights reserved. Registered under Ministry of Economy, UAE.</p>
+      <div style="display:flex; gap:1rem; font-size:0.8rem; color:rgba(255,255,255,0.6);">
+        <a href="#" onclick="event.preventDefault(); showNotification('Privacy Policy is standard UAE compliance layout.');">Privacy Policy</a>
+        <span>•</span>
+        <a href="#" onclick="event.preventDefault(); showNotification('Terms of Use align with MoHRE policies.');">Terms of Use</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- RESUME UPLOAD MODAL -->
+  <div class="modal-overlay" id="upload-modal-overlay">
+    <div class="modal-content">
+      <div class="modal-close" onclick="closeResumeUploadModal()">✕</div>
+      <h3 class="modal-title">Upload Candidate Profile</h3>
+      <p class="modal-subtitle">Our CV parsing engine scans for technical skills, experience matrices, and UAE compliance layouts.</p>
+      
+      <div class="upload-drag-area" id="upload-drag-area">
+        <div class="upload-icon">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
+        </div>
+        <p style="font-weight:600; color:var(--midnight-blue);">Drag and drop your resume file here</p>
+        <p style="font-size:0.8rem; color:var(--slate-text); margin-top:0.2rem;">Accepts PDF, DOCX, or TXT (Max 5MB)</p>
+        <button class="btn btn-secondary" style="margin-top:1rem; padding:0.4rem 1rem; font-size:0.8rem;">Browse Files</button>
+        <input type="file" id="resume-file-input" style="display:none;" accept=".pdf,.doc,.docx,.txt">
+      </div>
+      
+      <div class="upload-status-box" id="upload-status-box">
+        <div class="upload-progress-bar">
+          <div class="upload-progress-fill" id="upload-progress-fill"></div>
+        </div>
+        <p id="upload-status-label" style="font-size:0.85rem; font-weight:600; color:var(--slate-text); text-align:center;">Initiating upload sequence...</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADMIN LOGIN MODAL -->
+  <div class="modal-overlay" id="admin-login-overlay">
+    <div class="modal-content" style="max-width: 400px;">
+      <div class="modal-close" onclick="closeAdminLoginModal()">✕</div>
+      <h3 class="modal-title">Admin Authentication</h3>
+      <p class="modal-subtitle">Access management console to post mandates and track pipelines.</p>
+      
+      <form onsubmit="handleAdminLoginSubmit(event)">
+        <div class="form-group">
+          <label>Username</label>
+          <input type="text" id="admin-username" class="form-control" placeholder="admin" required>
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="admin-password" class="form-control" placeholder="••••••••" required>
+        </div>
+        <div id="login-error-msg" style="color: #ef4444; font-size: 0.85rem; margin-bottom: var(--spacing-sm); display: none;">
+          Invalid credentials.
+        </div>
+        <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center;">Authenticate</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- FLOATING AI SEARCH DRAWER -->
+  <div class="ai-drawer" id="ai-drawer">
+    <div class="ai-drawer-header">
+      <h3>
+        <svg style="width:20px;height:20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+        Galaxy AI Recruiter
+      </h3>
+      <div class="ai-drawer-close" onclick="toggleAIDrawer()">
+        <svg style="width:24px;height:24px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+      </div>
+    </div>
+    
+    <div class="ai-chat-messages" id="ai-chat-messages">
+      <div class="chat-bubble assistant">
+        Hello! I am your Galaxy AI matching consultant. I can instantly scan our job databases for vacancies fitting your requirements.<br><br>
+        Ask me something like: <strong>"Show me IT jobs in Dubai"</strong> or <strong>"Find clinical nurse vacancies"</strong>, or click a suggestion below.
+        <div class="chat-suggestions">
+          <button class="chat-suggest-btn" onclick="triggerSuggest('Show me cloud developer jobs')">"Show me cloud developer jobs"</button>
+          <button class="chat-suggest-btn" onclick="triggerSuggest('Jobs in Abu Dhabi')">"Jobs in Abu Dhabi"</button>
+          <button class="chat-suggest-btn" onclick="triggerSuggest('Finance jobs in Dubai')">"Finance jobs in Dubai"</button>
+        </div>
+      </div>
+    </div>
+    
+    <div class="typing-indicator" id="ai-typing-indicator" style="padding:10px 20px; background-color:var(--slate-light); align-items:center;">
+      <span style="font-size:0.8rem; color:var(--slate-text); margin-right:6px;">AI is scanning...</span>
+      <span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span>
+    </div>
+    
+    <div class="ai-drawer-input-area">
+      <input type="text" id="ai-chat-input" placeholder="Type message (e.g. 'Healthcare jobs in Abu Dhabi')...">
+      <button class="ai-send-btn flex-center" onclick="sendAIMessage()">
+        <svg style="width:16px;height:16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- FLOATING INTERACTIVE AI TRIGGER -->
+  <div class="ai-chat-float flex-center" onclick="toggleAIDrawer()" title="Talk to AI Recruiter">
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9.813 15.904L9 21l5.904-.813a8.5 8.5 0 10-5.091-4.283z"></path></svg>
+  </div>
+
+  <!-- MOCK LIVE CHAT SUPPORT WIDGET -->
+  <div class="live-chat-widget">
+    <div class="live-chat-toggle flex-center" onclick="toggleLiveChat()" title="Live Chat Support">
+      <svg style="width:24px;height:24px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
+    </div>
+    <div class="live-chat-box" id="live-chat-box">
+      <div class="live-chat-header">
+        <span>Galaxy Live Agent Support</span>
+        <span class="close-chat" onclick="toggleLiveChat()">✕</span>
+      </div>
+      <div class="live-chat-body" id="live-chat-body">
+        <div style="background:#ffffff; padding:8px; border:1px solid #e2e8f0; border-radius:8px; font-size:0.85rem; align-self:flex-start;">
+          Welcome to Galaxy Ventures Customer Advisory Desk. How can our recruitment team assist you today?
+        </div>
+      </div>
+      <div class="live-chat-input-area">
+        <input type="text" id="live-chat-input" placeholder="Type message for live support...">
+        <button class="live-chat-send" onclick="sendLiveChatMessage()">Send</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- WHATSAPP INTEGRATION DESK -->
+  <div class="whatsapp-float flex-center" onclick="window.open('https://wa.me/971509998888?text=Hello%20Galaxy%20Ventures%2C%20I%20am%20interested%20in%20your%20recruitment%20consultancy%20services.', '_blank')" title="WhatsApp Advisory Desk">
+    <svg fill="currentColor" viewBox="0 0 24 24">
+      <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.717-1.458L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.42 9.864-9.864.002-2.637-1.023-5.115-2.887-6.978C16.584 1.9 14.113.874 11.48.874 6.035.874 1.61 5.297 1.606 10.74c-.001 1.705.474 3.372 1.378 4.808L1.874 21.05l5.773-1.513v-.002z"/>
+      <path d="M15.97 13.56c-.225-.113-1.327-.655-1.533-.73-.205-.075-.354-.112-.504.112-.15.224-.58.73-.711.88-.13.147-.26.166-.485.053-.225-.113-.95-.35-1.81-1.12-.67-.597-1.12-1.335-1.25-1.56-.13-.226-.015-.348.1-.46.1-.1.226-.264.337-.396.113-.132.15-.226.225-.378.075-.15.038-.282-.019-.395-.056-.113-.505-1.217-.69-1.666-.182-.437-.367-.377-.504-.384-.13-.006-.28-.008-.43-.008-.15 0-.395.056-.6.282-.206.226-.787.77-.787 1.88s.81 2.18.922 2.33c.113.15 1.59 2.43 3.85 3.41.538.232.957.37 1.284.475.54.17.1.33.275.467.24.167.733.473.836.73.102.257.102.477.05.59-.05.112-.224.225-.45.338z"/>
+    </svg>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
