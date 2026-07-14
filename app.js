@@ -248,11 +248,30 @@ const AppState = {
 };
 
 // --- CLIENT-SIDE ROUTER ---
-function navigateTo(pageId) {
+function getPageIdFromPath() {
+  const path = window.location.pathname.substring(1); // remove leading slash
+  if (!path || path === 'home' || path === 'index.html') {
+    return 'home';
+  }
+  const validPages = ['home', 'about', 'jobs', 'employers', 'candidates', 'blog', 'contact', 'employer-dashboard'];
+  if (validPages.includes(path)) {
+    return path;
+  }
+  return 'home'; // default fallback
+}
+
+function navigateTo(pageId, pushState = true) {
   AppState.currentPage = pageId;
   renderActiveView();
   updateNavigationUI();
   window.scrollTo({ top: 0, behavior: 'smooth' });
+  
+  if (pushState) {
+    const path = pageId === 'home' ? '/' : `/${pageId}`;
+    if (window.location.pathname !== path) {
+      history.pushState({ pageId }, '', path);
+    }
+  }
 }
 
 function updateNavigationUI() {
@@ -583,6 +602,12 @@ function renderActiveView() {
       break;
     case 'contact':
       mainContent.innerHTML = getContactTemplate();
+      break;
+    case 'employer-dashboard':
+      mainContent.innerHTML = getEmployerDashboardTemplate();
+      if (AppState.adminActiveTab === 'pipeline') {
+        renderAtsCandidates();
+      }
       break;
     default:
       mainContent.innerHTML = getHomeTemplate();
@@ -1722,18 +1747,7 @@ function handleContactSubmission(event) {
 
 // --- PORTAL ROUTING: EMPLOYER DASHBOARD VIEW (ATS BOARD) ---
 function navigateToEmployerDashboard() {
-  AppState.currentPage = 'employer-dashboard';
-  const mainContent = document.getElementById('main-content');
-  mainContent.innerHTML = getEmployerDashboardTemplate();
-  mainContent.className = 'view-fade';
-  
-  // Highlight nothing in main nav
-  document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-  
-  if (AppState.adminActiveTab === 'pipeline') {
-    renderAtsCandidates();
-  }
+  navigateTo('employer-dashboard');
 }
 
 function switchAdminTab(tabName) {
@@ -1954,8 +1968,15 @@ function moveCandidateToStage(candId, stage) {
 
 // --- INITIALIZATION ---
 document.addEventListener('DOMContentLoaded', () => {
-  // Render default jobs immediately to avoid blank screen
-  renderActiveView();
+  // Listen popstate for browser back/forward navigation
+  window.addEventListener('popstate', (event) => {
+    const pageId = (event.state && event.state.pageId) || getPageIdFromPath();
+    navigateTo(pageId, false);
+  });
+
+  // Render initial page based on address bar URL
+  const initialPage = getPageIdFromPath();
+  navigateTo(initialPage, false);
   
   // Try fetching fresh data from backend
   fetchJobsFromServer();
