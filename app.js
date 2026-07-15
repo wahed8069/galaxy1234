@@ -845,13 +845,7 @@ function getHomeTemplate() {
                 <div style="font-size:0.7rem; color:var(--slate-text);">Vetted placements in Dubai</div>
               </div>
             </div>
-            <div class="hero-floating-card card-finance" style="right: 15%; bottom: -20px; animation: floatCard 4.8s ease-in-out infinite alternate 1.5s;">
-              <div class="floating-avatar" style="background:#fff1f2; color:#e11d48;">💰</div>
-              <div>
-                <div style="font-weight:700; font-size:0.85rem; color:var(--midnight-blue);">CFO Placed</div>
-                <div style="font-size:0.7rem; color:var(--slate-text);">DIFC corporate mandate</div>
-              </div>
-            </div>
+
           </div>
         </div>
       </div>
