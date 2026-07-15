@@ -773,6 +773,13 @@ function getHomeTemplate() {
                 <div style="font-size:0.7rem; color:var(--slate-text);">MOHRE compliance cleared</div>
               </div>
             </div>
+            <div class="hero-floating-card card-stories" style="left: 10%; bottom: -15px; animation: floatCard 4.5s ease-in-out infinite alternate;">
+              <div class="floating-avatar" style="background:#fef3c7; color:#d97706;">★</div>
+              <div>
+                <div style="font-weight:700; font-size:0.85rem; color:var(--midnight-blue);">10+ Success Stories</div>
+                <div style="font-size:0.7rem; color:var(--slate-text);">Vetted placements in Dubai</div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -882,9 +889,9 @@ function getHomeTemplate() {
             <div class="stat-number">95%</div>
             <div class="stat-label">Client Satisfaction</div>
           </div>
-          <div class="stat-item">
-            <div class="stat-number">10+ Yrs</div>
-            <div class="stat-label">Dubai Market Experience</div>
+          <div class="stat-item animate-stat-pulse">
+            <div class="stat-number">10+</div>
+            <div class="stat-label">Success Stories</div>
           </div>
         </div>
         
@@ -1635,8 +1642,15 @@ async function handleDeleteJob(jobId) {
       throw new Error(`Server returned status code: ${res.status}`);
     }
   } catch (err) {
-    console.error("Error deleting job:", err);
-    showNotification("Failed to delete job posting.");
+    console.warn("Backend failed to delete job, applying client-side fallback:", err);
+    const initialLength = JOBS_DATABASE.length;
+    JOBS_DATABASE = JOBS_DATABASE.filter(j => j.id !== jobId);
+    if (JOBS_DATABASE.length < initialLength) {
+      showNotification("Job posting deleted locally (Client fallback).");
+      navigateToEmployerDashboard();
+    } else {
+      showNotification("Failed to delete job: Job not found.");
+    }
   }
 }
 
