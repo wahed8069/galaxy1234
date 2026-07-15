@@ -121,7 +121,6 @@
         <span class="nav-link" data-page="about">About</span>
         <span class="nav-link" data-page="jobs">Jobs</span>
         <span class="nav-link" data-page="employers">Employers</span>
-        <span class="nav-link" data-page="candidates">Candidates</span>
         <span class="nav-link" data-page="contact">Contact</span>
       </nav>
 
@@ -267,69 +266,7 @@
     </div>
   </div>
 
-  <!-- FLOATING AI SEARCH DRAWER -->
-  <div class="ai-drawer" id="ai-drawer">
-    <div class="ai-drawer-header">
-      <h3>
-        <svg style="width:20px;height:20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-        Galaxy AI Recruiter
-      </h3>
-      <div class="ai-drawer-close" onclick="toggleAIDrawer()">
-        <svg style="width:24px;height:24px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-      </div>
-    </div>
-    
-    <div class="ai-chat-messages" id="ai-chat-messages">
-      <div class="chat-bubble assistant">
-        Hello! I am your Galaxy AI matching consultant. I can instantly scan our job databases for vacancies fitting your requirements.<br><br>
-        Ask me something like: <strong>"Show me IT jobs in Dubai"</strong> or <strong>"Find clinical nurse vacancies"</strong>, or click a suggestion below.
-        <div class="chat-suggestions">
-          <button class="chat-suggest-btn" onclick="triggerSuggest('Show me cloud developer jobs')">"Show me cloud developer jobs"</button>
-          <button class="chat-suggest-btn" onclick="triggerSuggest('Jobs in Abu Dhabi')">"Jobs in Abu Dhabi"</button>
-          <button class="chat-suggest-btn" onclick="triggerSuggest('Finance jobs in Dubai')">"Finance jobs in Dubai"</button>
-        </div>
-      </div>
-    </div>
-    
-    <div class="typing-indicator" id="ai-typing-indicator" style="padding:10px 20px; background-color:var(--slate-light); align-items:center;">
-      <span style="font-size:0.8rem; color:var(--slate-text); margin-right:6px;">AI is scanning...</span>
-      <span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span>
-    </div>
-    
-    <div class="ai-drawer-input-area">
-      <input type="text" id="ai-chat-input" placeholder="Type message (e.g. 'Healthcare jobs in Abu Dhabi')...">
-      <button class="ai-send-btn flex-center" onclick="sendAIMessage()">
-        <svg style="width:16px;height:16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-      </button>
-    </div>
-  </div>
 
-  <!-- FLOATING INTERACTIVE AI TRIGGER -->
-  <div class="ai-chat-float flex-center" onclick="toggleAIDrawer()" title="Talk to AI Recruiter">
-    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9.813 15.904L9 21l5.904-.813a8.5 8.5 0 10-5.091-4.283z"></path></svg>
-  </div>
-
-  <!-- MOCK LIVE CHAT SUPPORT WIDGET -->
-  <div class="live-chat-widget">
-    <div class="live-chat-toggle flex-center" onclick="toggleLiveChat()" title="Live Chat Support">
-      <svg style="width:24px;height:24px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
-    </div>
-    <div class="live-chat-box" id="live-chat-box">
-      <div class="live-chat-header">
-        <span>Galaxy Live Agent Support</span>
-        <span class="close-chat" onclick="toggleLiveChat()">✕</span>
-      </div>
-      <div class="live-chat-body" id="live-chat-body">
-        <div style="background:#ffffff; padding:8px; border:1px solid #e2e8f0; border-radius:8px; font-size:0.85rem; align-self:flex-start;">
-          Welcome to Galaxy Venture (Human Resources Consultancies LLC) Customer Advisory Desk. How can our recruitment team assist you today?
-        </div>
-      </div>
-      <div class="live-chat-input-area">
-        <input type="text" id="live-chat-input" placeholder="Type message for live support...">
-        <button class="live-chat-send" onclick="sendLiveChatMessage()">Send</button>
-      </div>
-    </div>
-  </div>
 
   <!-- WHATSAPP INTEGRATION DESK -->
   <div class="whatsapp-float flex-center" onclick="window.open('https://wa.me/917012957203?text=Hello%20Galaxy%20Venture%2C%20I%20am%20interested%20in%20your%20recruitment%20consultancy%20services.', '_blank')" title="WhatsApp Advisory Desk">

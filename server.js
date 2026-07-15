@@ -118,6 +118,41 @@ app.post('/api/jobs', (req, res) => {
   }
 });
 
+// 4. Delete Job Posting (Authenticated)
+app.delete('/api/jobs/:id', (req, res) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader || authHeader !== `Bearer ${ADMIN_TOKEN}`) {
+    return res.status(401).json({
+      success: false,
+      error: 'Unauthorized: Invalid or missing administrator token.'
+    });
+  }
+  
+  const jobId = parseInt(req.params.id);
+  let jobs = readJobs();
+  const initialLength = jobs.length;
+  jobs = jobs.filter(j => j.id !== jobId);
+  
+  if (jobs.length === initialLength) {
+    return res.status(404).json({
+      success: false,
+      error: 'Job posting not found.'
+    });
+  }
+  
+  if (writeJobs(jobs)) {
+    res.json({
+      success: true,
+      message: 'Job entry deleted successfully.'
+    });
+  } else {
+    res.status(500).json({
+      success: false,
+      error: 'Failed to write updated jobs list to disk.'
+    });
+  }
+});
+
 // Serve main client
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));

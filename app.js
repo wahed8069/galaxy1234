@@ -253,7 +253,7 @@ function getPageIdFromPath() {
   if (!path || path === 'home' || path === 'index.html') {
     return 'home';
   }
-  const validPages = ['home', 'about', 'jobs', 'employers', 'candidates', 'blog', 'contact', 'employer-dashboard'];
+  const validPages = ['home', 'about', 'jobs', 'employers', 'blog', 'contact', 'employer-dashboard'];
   if (validPages.includes(path)) {
     return path;
   }
@@ -373,8 +373,8 @@ function handleResumeFileSelect(file) {
           
           setTimeout(() => {
             closeResumeUploadModal();
-            // Redirect to Candidate Dashboard to see application
-            navigateTo('candidates');
+            // Redirect to Jobs page
+            navigateTo('jobs');
           }, 1000);
           
         }, 1200);
@@ -743,21 +743,21 @@ function getHomeTemplate() {
           <div>
             <h3 class="service-column-title"><span>For</span> Job Seekers</h3>
             <div class="services-list">
-              <div class="service-card" onclick="navigateTo('candidates')">
+              <div class="service-card" onclick="navigateTo('jobs')">
                 <div class="service-card-header">
                   <span class="service-card-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg></span>
                   <h4 class="service-card-title">Job Placement</h4>
                 </div>
                 <p>Curating connections with leading corporations in Dubai, Abu Dhabi, and beyond.</p>
               </div>
-              <div class="service-card" onclick="navigateTo('candidates')">
+              <div class="service-card" onclick="navigateTo('jobs')">
                 <div class="service-card-header">
                   <span class="service-card-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg></span>
                   <h4 class="service-card-title">Career Counseling</h4>
                 </div>
                 <p>Personalized strategic planning and mentorship tailored to the Middle Eastern corporate landscape.</p>
               </div>
-              <div class="service-card" onclick="navigateTo('candidates')">
+              <div class="service-card" onclick="navigateTo('jobs')">
                 <div class="service-card-header">
                   <span class="service-card-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg></span>
                   <h4 class="service-card-title">CV Optimization & Cover Letters</h4>
@@ -1465,6 +1465,43 @@ async function handleEmployerJobPosting(event) {
   }
 }
 
+async function handleDeleteJob(jobId) {
+  if (!ADMIN_SESSION_TOKEN) {
+    showNotification("Error: You must be logged in as an administrator.");
+    openAdminLoginModal();
+    return;
+  }
+  
+  if (!confirm("Are you sure you want to delete this job posting?")) {
+    return;
+  }
+  
+  try {
+    const res = await fetch(`/api/jobs/${jobId}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${ADMIN_SESSION_TOKEN}`
+      }
+    });
+    
+    if (res.ok) {
+      const data = await res.json();
+      if (data.success) {
+        showNotification("Job posting deleted successfully.");
+        await fetchJobsFromServer();
+        navigateToEmployerDashboard();
+      } else {
+        showNotification(`Delete failed: ${data.error}`);
+      }
+    } else {
+      throw new Error(`Server returned status code: ${res.status}`);
+    }
+  } catch (err) {
+    console.error("Error deleting job:", err);
+    showNotification("Failed to delete job posting.");
+  }
+}
+
 // 5. CANDIDATES TEMPLATE WITH DASHBOARD INCLUSION
 function getCandidatesTemplate() {
   const savedJobsCards = AppState.savedJobs.map(jobId => {
@@ -1755,76 +1792,99 @@ function switchAdminTab(tabName) {
 }
 
 function getEmployerDashboardTemplate() {
-  const isPipeline = AppState.adminActiveTab === 'pipeline';
+  const currentTab = AppState.adminActiveTab;
   
-  const mainPanelHTML = isPipeline ? `
-    <h3 style="font-size:1.4rem; color:var(--midnight-blue); margin-bottom:0.5rem;">Applicant Tracking Pipeline (ATS)</h3>
-    <p style="font-size:0.85rem; color:var(--slate-text); margin-bottom:1.5rem;">Drag candidates across stages or click the "Advance ➔" button to advance them in real time.</p>
+  let mainPanelHTML = '';
+  if (currentTab === 'pipeline') {
+    mainPanelHTML = `
+      <h3 style="font-size:1.4rem; color:var(--midnight-blue); margin-bottom:0.5rem;">Applicant Tracking Pipeline (ATS)</h3>
+      <p style="font-size:0.85rem; color:var(--slate-text); margin-bottom:1.5rem;">Drag candidates across stages or click the "Advance ➔" button to advance them in real time.</p>
+      
+      <div class="ats-board">
+        <div class="ats-column">
+          <div class="ats-col-header">Applied <span class="ats-col-count" id="count-applied">0</span></div>
+          <div class="ats-cards-container" id="col-Applied"></div>
+        </div>
+        <div class="ats-column">
+          <div class="ats-col-header">Screening <span class="ats-col-count" id="count-screening">0</span></div>
+          <div class="ats-cards-container" id="col-Screening"></div>
+        </div>
+        <div class="ats-column">
+          <div class="ats-col-header">Interview <span class="ats-col-count" id="count-interview">0</span></div>
+          <div class="ats-cards-container" id="col-Interview"></div>
+        </div>
+        <div class="ats-column">
+          <div class="ats-col-header">Placed <span class="ats-col-count" id="count-placed">0</span></div>
+          <div class="ats-cards-container" id="col-Placed"></div>
+        </div>
+      </div>
+    `;
+  } else if (currentTab === 'post-job') {
+    mainPanelHTML = `
+      <h3 style="font-size:1.4rem; color:var(--midnight-blue); margin-bottom:0.5rem;">Post a New Active Mandate</h3>
+      <p style="font-size:0.85rem; color:var(--slate-text); margin-bottom:1.5rem;">Fill out the parameters below to add a verified, high-converting vacancy to the main job board.</p>
+      
+      <form onsubmit="handleEmployerJobPosting(event)" style="max-width: 600px;">
+        <div class="form-group">
+          <label>Company Name</label>
+          <input type="text" id="post-company" class="form-control" placeholder="E.g., Dubai Holdings" required>
+        </div>
+        <div class="grid-2" style="gap:0.8rem; margin-bottom:0.8rem;">
+          <div class="form-group" style="margin-bottom:0;">
+            <label>Job Title</label>
+            <input type="text" id="post-title" class="form-control" placeholder="E.g., Senior DevOps Coordinator" required>
+          </div>
+          <div class="form-group" style="margin-bottom:0;">
+            <label>Industry</label>
+            <select id="post-industry" class="form-control" required>
+              <option value="IT & Technology">IT & Tech</option>
+              <option value="Healthcare">Healthcare</option>
+              <option value="Engineering">Engineering</option>
+              <option value="Finance">Finance</option>
+              <option value="Construction">Construction</option>
+              <option value="Hospitality">Hospitality</option>
+              <option value="Oil & Gas">Oil & Gas</option>
+              <option value="Logistics">Logistics</option>
+              <option value="Retail">Retail</option>
+            </select>
+          </div>
+        </div>
+        <div class="grid-2" style="gap:0.8rem; margin-bottom:0.8rem;">
+          <div class="form-group" style="margin-bottom:0;">
+            <label>Location</label>
+            <input type="text" id="post-location" class="form-control" placeholder="Dubai / Abu Dhabi" required>
+          </div>
+          <div class="form-group" style="margin-bottom:0;">
+            <label>Salary (AED/mo)</label>
+            <input type="text" id="post-salary" class="form-control" placeholder="E.g., 20,000 - 25,000" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Requirements</label>
+          <textarea id="post-reqs" class="form-control" placeholder="List key languages, licenses, or experience caps..." required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center;">Post Listing to Database</button>
+      </form>
+    `;
+  } else if (currentTab === 'manage-jobs') {
+    const jobsListHTML = JOBS_DATABASE.map(j => `
+      <div style="background:#f8fafc; border:1px solid #e2e8f0; padding:1rem; border-radius:12px; display:flex; justify-content:space-between; align-items:center; margin-bottom:0.8rem;">
+        <div>
+          <strong style="color:var(--midnight-blue); font-size:1.05rem;">${j.title}</strong>
+          <div style="font-size:0.8rem; color:var(--slate-text);">${j.company} • ${j.location} • ${j.salary}</div>
+        </div>
+        <button onclick="handleDeleteJob(${j.id})" class="btn btn-secondary" style="padding:0.4rem 0.8rem; font-size:0.75rem; border-color:#ef4444; color:#ef4444; background: transparent;">Delete</button>
+      </div>
+    `).join('');
     
-    <div class="ats-board">
-      <div class="ats-column">
-        <div class="ats-col-header">Applied <span class="ats-col-count" id="count-applied">0</span></div>
-        <div class="ats-cards-container" id="col-Applied"></div>
+    mainPanelHTML = `
+      <h3 style="font-size:1.4rem; color:var(--midnight-blue); margin-bottom:0.5rem;">Manage Active Jobs</h3>
+      <p style="font-size:0.85rem; color:var(--slate-text); margin-bottom:1.5rem;">View and remove active job mandates from the job board.</p>
+      <div style="max-width: 700px;">
+        ${jobsListHTML || '<p style="color:var(--slate-text);">No active jobs listed.</p>'}
       </div>
-      <div class="ats-column">
-        <div class="ats-col-header">Screening <span class="ats-col-count" id="count-screening">0</span></div>
-        <div class="ats-cards-container" id="col-Screening"></div>
-      </div>
-      <div class="ats-column">
-        <div class="ats-col-header">Interview <span class="ats-col-count" id="count-interview">0</span></div>
-        <div class="ats-cards-container" id="col-Interview"></div>
-      </div>
-      <div class="ats-column">
-        <div class="ats-col-header">Placed <span class="ats-col-count" id="count-placed">0</span></div>
-        <div class="ats-cards-container" id="col-Placed"></div>
-      </div>
-    </div>
-  ` : `
-    <h3 style="font-size:1.4rem; color:var(--midnight-blue); margin-bottom:0.5rem;">Post a New Active Mandate</h3>
-    <p style="font-size:0.85rem; color:var(--slate-text); margin-bottom:1.5rem;">Fill out the parameters below to add a verified, high-converting vacancy to the main job board.</p>
-    
-    <form onsubmit="handleEmployerJobPosting(event)" style="max-width: 600px;">
-      <div class="form-group">
-        <label>Company Name</label>
-        <input type="text" id="post-company" class="form-control" placeholder="E.g., Dubai Holdings" required>
-      </div>
-      <div class="grid-2" style="gap:0.8rem; margin-bottom:0.8rem;">
-        <div class="form-group" style="margin-bottom:0;">
-          <label>Job Title</label>
-          <input type="text" id="post-title" class="form-control" placeholder="E.g., Senior DevOps Coordinator" required>
-        </div>
-        <div class="form-group" style="margin-bottom:0;">
-          <label>Industry</label>
-          <select id="post-industry" class="form-control" required>
-            <option value="IT & Technology">IT & Tech</option>
-            <option value="Healthcare">Healthcare</option>
-            <option value="Engineering">Engineering</option>
-            <option value="Finance">Finance</option>
-            <option value="Construction">Construction</option>
-            <option value="Hospitality">Hospitality</option>
-            <option value="Oil & Gas">Oil & Gas</option>
-            <option value="Logistics">Logistics</option>
-            <option value="Retail">Retail</option>
-          </select>
-        </div>
-      </div>
-      <div class="grid-2" style="gap:0.8rem; margin-bottom:0.8rem;">
-        <div class="form-group" style="margin-bottom:0;">
-          <label>Location</label>
-          <input type="text" id="post-location" class="form-control" placeholder="Dubai / Abu Dhabi" required>
-        </div>
-        <div class="form-group" style="margin-bottom:0;">
-          <label>Salary (AED/mo)</label>
-          <input type="text" id="post-salary" class="form-control" placeholder="E.g., 20,000 - 25,000" required>
-        </div>
-      </div>
-      <div class="form-group">
-        <label>Requirements</label>
-        <textarea id="post-reqs" class="form-control" placeholder="List key languages, licenses, or experience caps..." required></textarea>
-      </div>
-      <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center;">Post Listing to Database</button>
-    </form>
-  `;
+    `;
+  }
 
   return `
     <section class="dashboard-view">
@@ -1834,8 +1894,9 @@ function getEmployerDashboardTemplate() {
           <div class="dashboard-sidebar">
             <h4 style="font-size:0.95rem; text-transform:uppercase; color:var(--slate-text); margin-bottom:1rem; padding-left:0.5rem; letter-spacing:0.05em;">Admin Control</h4>
             <ul class="dash-menu-list">
-              <li class="dash-menu-item ${isPipeline ? 'active' : ''}" onclick="switchAdminTab('pipeline')"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 002 2h2a2 2 0 002-2"></path></svg> Candidate pipeline</li>
-              <li class="dash-menu-item ${!isPipeline ? 'active' : ''}" onclick="switchAdminTab('post-job')"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> Post New Job</li>
+              <li class="dash-menu-item ${currentTab === 'pipeline' ? 'active' : ''}" onclick="switchAdminTab('pipeline')"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 002 2h2a2 2 0 002-2"></path></svg> Candidate pipeline</li>
+              <li class="dash-menu-item ${currentTab === 'post-job' ? 'active' : ''}" onclick="switchAdminTab('post-job')"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> Post New Job</li>
+              <li class="dash-menu-item ${currentTab === 'manage-jobs' ? 'active' : ''}" onclick="switchAdminTab('manage-jobs')"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg> Manage Jobs</li>
               <li class="dash-menu-item dash-menu-logout" onclick="logoutAdmin()"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg> Logout</li>
             </ul>
           </div>
