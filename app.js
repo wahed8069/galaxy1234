@@ -216,9 +216,30 @@ const BLOGS_DATABASE = [
 ];
 
 const TESTIMONIALS_DATABASE = [
-  { quote: "Galaxy Venture guided me step-by-step through my transition from London to Dubai. Their DHA licensing and interview coaching got me a placement at a top clinic within three weeks.", author: "Dr. Sarah Jenkins", role: "Critical Care Nurse, Emirates Health Clinic", type: "candidate" },
-  { quote: "Finding qualified structural engineers with specific Middle East project exposure is always a challenge. Galaxy Venture delivered a shortlist of three stellar candidates in days.", author: "Eng. Tariq Al-Mansoori", role: "HR Director, Arabtec Construction", type: "employer" },
-  { quote: "The AI search assistant on their portal matched me with a remote position. The resume parsing tool was highly intuitive, and my interview scheduling was fully automated.", author: "Liam Chen", role: "Cloud Infrastructure Architect", type: "candidate" }
+  { 
+    quote: "Galaxy Venture guided me step-by-step through my transition from London to Dubai. Their DHA licensing and interview coaching got me a placement at a top clinic within three weeks.", 
+    author: "Dr. Sarah Jenkins", 
+    role: "Critical Care Nurse", 
+    company: "Emirates Health Clinic", 
+    avatar: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=150&h=150&q=80",
+    rating: 5 
+  },
+  { 
+    quote: "Finding qualified structural engineers with specific Middle East project exposure is always a challenge. Galaxy Venture delivered a shortlist of three stellar candidates in days.", 
+    author: "Eng. Tariq Al-Mansoori", 
+    role: "HR Director", 
+    company: "Arabtec Construction", 
+    avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&h=150&q=80",
+    rating: 5 
+  },
+  { 
+    quote: "The team at Galaxy Venture matched me with a remote position. The resume guidance was highly intuitive, and my interview scheduling with UAE employers was fully handled.", 
+    author: "Liam Chen", 
+    role: "Cloud Infrastructure Architect", 
+    company: "Independent Consultant", 
+    avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&h=150&q=80",
+    rating: 5 
+  }
 ];
 
 // --- APP GLOBAL STATE ---
@@ -253,7 +274,7 @@ function getPageIdFromPath() {
   if (!path || path === 'home' || path === 'index.html') {
     return 'home';
   }
-  const validPages = ['home', 'about', 'jobs', 'employers', 'blog', 'contact', 'employer-dashboard'];
+  const validPages = ['home', 'about', 'services', 'jobs', 'employers', 'blog', 'contact', 'employer-dashboard'];
   if (validPages.includes(path)) {
     return path;
   }
@@ -589,10 +610,12 @@ function renderActiveView() {
   switch (AppState.currentPage) {
     case 'home':
       mainContent.innerHTML = getHomeTemplate();
-      initCarousel();
       break;
     case 'about':
       mainContent.innerHTML = getAboutTemplate();
+      break;
+    case 'services':
+      mainContent.innerHTML = getServicesTemplate();
       break;
     case 'jobs':
       mainContent.innerHTML = getJobsTemplate();
@@ -618,7 +641,6 @@ function renderActiveView() {
       break;
     default:
       mainContent.innerHTML = getHomeTemplate();
-      initCarousel();
   }
 }
 
@@ -651,19 +673,6 @@ function triggerHeroTagSearch(tagName) {
 
 // 1. HOME TEMPLATE
 function getHomeTemplate() {
-  // Testimonials filter candidates vs employers
-  const testSlides = TESTIMONIALS_DATABASE.map((t, idx) => `
-    <div class="carousel-slide ${idx === 0 ? 'active' : ''}">
-      <p class="testimonial-quote">"${t.quote}"</p>
-      <div class="testimonial-author">
-        <div class="author-avatar">${t.author.charAt(0)}</div>
-        <div class="author-info">
-          <div class="author-name">${t.author}</div>
-          <div class="author-role">${t.role}</div>
-        </div>
-      </div>
-    </div>
-  `).join('');
 
   // Featured Jobs cards (take top 3)
   const featJobs = JOBS_DATABASE.slice(0, 3).map(j => `
@@ -813,65 +822,44 @@ function getHomeTemplate() {
     </section>
 
     <!-- Services Section -->
-    <section class="services-section section-padding">
+    <section class="services-section section-padding" style="background:#f8fafc; border-top:1px solid #e2e8f0; border-bottom:1px solid #e2e8f0;">
       <div class="container">
-        <div class="section-header">
-          <span class="section-tag">SERVICES</span>
-          <h2 class="section-title">Bespoke Talent Solutions Tailored for Success</h2>
+        <div class="section-header" style="text-align: center; margin-bottom: 4rem;">
+          <span class="section-tag" style="color:var(--cosmic-purple); margin-bottom: 0.5rem; display: inline-block;">SERVICES VERTICALS</span>
+          <h2 class="section-title" style="margin-top: 0;">Comprehensive Staffing & Consultancy Solutions</h2>
           <p class="section-subtitle">Connecting exceptional talent with premium UAE businesses through customized matching strategies.</p>
         </div>
-        <div class="services-grid-wrapper">
-          <div>
-            <h3 class="service-column-title"><span>For</span> Job Seekers</h3>
-            <div class="services-list">
-              <div class="service-card" onclick="navigateTo('jobs')">
-                <div class="service-card-header">
-                  <span class="service-card-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg></span>
-                  <h4 class="service-card-title">Job Placement</h4>
-                </div>
-                <p>Curating connections with leading corporations in Dubai, Abu Dhabi, and beyond.</p>
-              </div>
-              <div class="service-card" onclick="navigateTo('jobs')">
-                <div class="service-card-header">
-                  <span class="service-card-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg></span>
-                  <h4 class="service-card-title">Career Counseling</h4>
-                </div>
-                <p>Personalized strategic planning and mentorship tailored to the Middle Eastern corporate landscape.</p>
-              </div>
-              <div class="service-card" onclick="navigateTo('jobs')">
-                <div class="service-card-header">
-                  <span class="service-card-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg></span>
-                  <h4 class="service-card-title">CV Optimization & Cover Letters</h4>
-                </div>
-                <p>Re-structuring your resume template to pass scanning mechanisms and impress recruiters.</p>
-              </div>
-            </div>
+        
+        <div class="services-matrix-grid">
+          <div class="service-matrix-card" onclick="navigateTo('services')">
+            <div class="service-matrix-icon">👨💼</div>
+            <h3 class="service-matrix-title">Permanent Recruitment</h3>
+            <p class="service-matrix-desc">End-to-end permanent staffing solutions across the GCC, matching top-tier talent with your unique corporate culture and values.</p>
           </div>
-          <div>
-            <h3 class="service-column-title"><span>For</span> Employers</h3>
-            <div class="services-list">
-              <div class="service-card" onclick="navigateTo('employers')">
-                <div class="service-card-header">
-                  <span class="service-card-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg></span>
-                  <h4 class="service-card-title">Executive Search</h4>
-                </div>
-                <p>Direct premium acquisition for board members, C-level leadership, and managing partners.</p>
-              </div>
-              <div class="service-card" onclick="navigateTo('employers')">
-                <div class="service-card-header">
-                  <span class="service-card-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg></span>
-                  <h4 class="service-card-title">Permanent Staffing Solutions</h4>
-                </div>
-                <p>End-to-end recruitment management, from listing and testing to final offer onboarding.</p>
-              </div>
-              <div class="service-card" onclick="navigateTo('employers')">
-                <div class="service-card-header">
-                  <span class="service-card-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg></span>
-                  <h4 class="service-card-title">Workforce Contracting</h4>
-                </div>
-                <p>Supplying specialized short-term and contract consultants for operational flexibility.</p>
-              </div>
-            </div>
+          <div class="service-matrix-card" onclick="navigateTo('services')">
+            <div class="service-matrix-icon">💻</div>
+            <h3 class="service-matrix-title">IT Recruitment</h3>
+            <p class="service-matrix-desc">Sourcing elite software engineers, DevOps specialists, cloud architects, and IT leadership for UAE tech nodes.</p>
+          </div>
+          <div class="service-matrix-card" onclick="navigateTo('services')">
+            <div class="service-matrix-icon">🏢</div>
+            <h3 class="service-matrix-title">Non-IT Recruitment</h3>
+            <p class="service-matrix-desc">Operations staffing in logistics, retail, construction, manufacturing, and DHA licensed healthcare environments.</p>
+          </div>
+          <div class="service-matrix-card" onclick="navigateTo('services')">
+            <div class="service-matrix-icon">📋</div>
+            <h3 class="service-matrix-title">Executive Search</h3>
+            <p class="service-matrix-desc">Highly confidential board-level headhunting for executive leadership, C-suite officers, and specialized directors.</p>
+          </div>
+          <div class="service-matrix-card" onclick="navigateTo('services')">
+            <div class="service-matrix-icon">💰</div>
+            <h3 class="service-matrix-title">Payroll Services</h3>
+            <p class="service-matrix-desc">Compliant payroll outsourcing, visa processing, onboarding, and medical insurance registration in the UAE.</p>
+          </div>
+          <div class="service-matrix-card" onclick="navigateTo('services')">
+            <div class="service-matrix-icon">📈</div>
+            <h3 class="service-matrix-title">HR Consulting</h3>
+            <p class="service-matrix-desc">Specialized advisory on UAE labor laws, Emiratisation localization quotas, company restructuring, and policy drafting.</p>
           </div>
         </div>
       </div>
@@ -944,22 +932,29 @@ function getHomeTemplate() {
     </section>
 
     <!-- Success Stories (Testimonials) -->
-    <section class="stories-section section-padding">
+    <section class="stories-section section-padding" style="background:#f8fafc; border-top:1px solid #e2e8f0; border-bottom:1px solid #e2e8f0;">
       <div class="dot-grid"></div>
       <div class="container">
-        <div class="section-header">
-          <span class="section-tag" style="color:var(--electric-cyan);">SUCCESS STORIES</span>
-          <h2 class="section-title">Trusted by Leading Teams & Candidates</h2>
+        <div class="section-header" style="text-align: center; margin-bottom: 4rem;">
+          <span class="section-tag" style="color:var(--cosmic-purple); margin-bottom: 0.5rem; display: inline-block;">SUCCESS STORIES</span>
+          <h2 class="section-title" style="margin-top: 0;">Trusted by Leading Teams & Candidates</h2>
         </div>
         
-        <div class="carousel-container">
-          ${testSlides}
-        </div>
-        
-        <div class="carousel-controls">
-          <button class="carousel-btn" onclick="prevSlide()"><svg style="width:20px;height:20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg></button>
-          <div class="carousel-dots" id="carousel-dots"></div>
-          <button class="carousel-btn" onclick="nextSlide()"><svg style="width:20px;height:20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></button>
+        <div class="testimonials-static-grid">
+          ${TESTIMONIALS_DATABASE.map(t => `
+            <div class="testimonial-grid-card">
+              <div class="testimonial-avatar-wrapper">
+                <img src="${t.avatar}" alt="${t.author}" class="testimonial-avatar-img">
+              </div>
+              <h4 class="testimonial-author-name">${t.author}</h4>
+              <div class="testimonial-author-role">${t.role}</div>
+              <div class="testimonial-author-company">${t.company}</div>
+              <p class="testimonial-card-quote">"${t.quote}"</p>
+              <div class="testimonial-rating-stars">
+                ${'★'.repeat(t.rating)}
+              </div>
+            </div>
+          `).join('')}
         </div>
       </div>
     </section>
@@ -1068,6 +1063,70 @@ function getHomeTemplate() {
           <button onclick="navigateTo('contact')" class="btn btn-primary">Connect With Us</button>
           <button onclick="toggleAIDrawer()" class="btn btn-secondary">Talk to AI Recruiter</button>
         </div>
+      </div>
+    </section>
+  `;
+}
+
+function getServicesTemplate() {
+  return `
+    <section class="inner-hero">
+      <div class="dot-grid"></div>
+      <div class="container" style="text-align:center;">
+        <span class="section-tag" style="color:var(--electric-cyan);">OUR SERVICES</span>
+        <h1>Tailored Recruitment Solutions</h1>
+        <p style="max-width:600px; margin:0 auto; color:rgba(255,255,255,0.8);">Connecting top-tier professionals globally with leading corporations across the UAE and Gulf region.</p>
+      </div>
+    </section>
+
+    <section class="services-section section-padding">
+      <div class="container">
+        <div class="section-header" style="text-align: center; margin-bottom: 4rem;">
+          <span class="section-tag">SERVICES MATRIX</span>
+          <h2 class="section-title">Comprehensive Staffing & Consultancy Verticals</h2>
+        </div>
+        
+        <div class="services-matrix-grid">
+          <div class="service-matrix-card" onclick="navigateTo('contact')">
+            <div class="service-matrix-icon">👨💼</div>
+            <h3 class="service-matrix-title">Permanent Recruitment</h3>
+            <p class="service-matrix-desc">End-to-end permanent staffing solutions across the GCC, matching top-tier talent with your unique corporate culture and values.</p>
+          </div>
+          <div class="service-matrix-card" onclick="navigateTo('contact')">
+            <div class="service-matrix-icon">💻</div>
+            <h3 class="service-matrix-title">IT Recruitment</h3>
+            <p class="service-matrix-desc">Sourcing elite software engineers, DevOps specialists, cloud architects, and IT leadership for UAE tech nodes.</p>
+          </div>
+          <div class="service-matrix-card" onclick="navigateTo('contact')">
+            <div class="service-matrix-icon">🏢</div>
+            <h3 class="service-matrix-title">Non-IT Recruitment</h3>
+            <p class="service-matrix-desc">Operations staffing in logistics, retail, construction, manufacturing, and DHA licensed healthcare environments.</p>
+          </div>
+          <div class="service-matrix-card" onclick="navigateTo('contact')">
+            <div class="service-matrix-icon">📋</div>
+            <h3 class="service-matrix-title">Executive Search</h3>
+            <p class="service-matrix-desc">Highly confidential board-level headhunting for executive leadership, C-suite officers, and specialized directors.</p>
+          </div>
+          <div class="service-matrix-card" onclick="navigateTo('contact')">
+            <div class="service-matrix-icon">💰</div>
+            <h3 class="service-matrix-title">Payroll Services</h3>
+            <p class="service-matrix-desc">Compliant payroll outsourcing, visa processing, onboarding, and medical insurance registration in the UAE.</p>
+          </div>
+          <div class="service-matrix-card" onclick="navigateTo('contact')">
+            <div class="service-matrix-icon">📈</div>
+            <h3 class="service-matrix-title">HR Consulting</h3>
+            <p class="service-matrix-desc">Specialized advisory on UAE labor laws, Emiratisation localization quotas, company restructuring, and policy drafting.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section class="section-padding" style="background:#f8fafc; border-top: 1px solid #e2e8f0; text-align: center;">
+      <div class="container" style="max-width:800px;">
+        <h2 style="font-size:2rem; color:var(--midnight-blue); margin-bottom:1rem;">Ready to Partner with Us?</h2>
+        <p style="color:var(--slate-text); margin-bottom:2rem;">Whether you are an executive seeking your next career move or an employer looking to scale operations, our expert recruiters are ready to assist you.</p>
+        <button onclick="navigateTo('contact')" class="btn btn-primary">Get in Touch</button>
       </div>
     </section>
   `;
