@@ -762,28 +762,6 @@ function getHomeTemplate() {
           </div>
         </div>
       </div>
-      
-      <!-- Partner Marquee (Parallel Style) -->
-      <div class="partner-marquee-container">
-        <div class="marquee-track">
-          <!-- Double set of items for seamless loop -->
-          <div class="marquee-item">EMAAR</div>
-          <div class="marquee-item">ALADAR</div>
-          <div class="marquee-item">MOHRE</div>
-          <div class="marquee-item">DHA</div>
-          <div class="marquee-item">DP WORLD</div>
-          <div class="marquee-item">NMC HEALTH</div>
-          <div class="marquee-item">DAMAC</div>
-          <!-- Repeat -->
-          <div class="marquee-item">EMAAR</div>
-          <div class="marquee-item">ALADAR</div>
-          <div class="marquee-item">MOHRE</div>
-          <div class="marquee-item">DHA</div>
-          <div class="marquee-item">DP WORLD</div>
-          <div class="marquee-item">NMC HEALTH</div>
-          <div class="marquee-item">DAMAC</div>
-        </div>
-      </div>
     </section>
 
     <!-- About Section Sneak Peak -->
