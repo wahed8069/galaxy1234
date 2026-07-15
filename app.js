@@ -824,6 +824,13 @@ function getHomeTemplate() {
                 <div style="font-size:0.7rem; color:var(--slate-text);">Placed in Dubai Healthcare City</div>
               </div>
             </div>
+            <div class="hero-floating-card card-tech" style="right: -20px; top: 12%; animation: floatCard 4s ease-in-out infinite alternate 0.5s;">
+              <div class="floating-avatar" style="background:#ecfdf5; color:#059669;">💻</div>
+              <div>
+                <div style="font-weight:700; font-size:0.85rem; color:var(--midnight-blue);">DevOps Lead Sourced</div>
+                <div style="font-size:0.7rem; color:var(--slate-text);">Placed in Dubai Internet City</div>
+              </div>
+            </div>
             <div class="hero-floating-card card-employers" style="right: -10px; bottom: 10%;">
               <div class="floating-avatar" style="background:var(--cosmic-purple-light); color:var(--cosmic-purple);">🏢</div>
               <div>
@@ -836,6 +843,13 @@ function getHomeTemplate() {
               <div>
                 <div style="font-weight:700; font-size:0.85rem; color:var(--midnight-blue);">100+ Success Stories</div>
                 <div style="font-size:0.7rem; color:var(--slate-text);">Vetted placements in Dubai</div>
+              </div>
+            </div>
+            <div class="hero-floating-card card-finance" style="right: 15%; bottom: -20px; animation: floatCard 4.8s ease-in-out infinite alternate 1.5s;">
+              <div class="floating-avatar" style="background:#fff1f2; color:#e11d48;">💰</div>
+              <div>
+                <div style="font-weight:700; font-size:0.85rem; color:var(--midnight-blue);">CFO Placed</div>
+                <div style="font-size:0.7rem; color:var(--slate-text);">DIFC corporate mandate</div>
               </div>
             </div>
           </div>
