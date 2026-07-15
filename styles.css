@@ -2603,9 +2603,9 @@ footer p {
 }
 
 .hero-tag-pill:hover {
-  background: rgba(132, 204, 22, 0.1);
-  color: #65a30d;
-  border-color: rgba(132, 204, 22, 0.3);
+  background: var(--cosmic-purple-light);
+  color: var(--cosmic-purple);
+  border-color: rgba(109, 40, 217, 0.3);
   transform: translateY(-1px);
 }
 
