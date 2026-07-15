@@ -190,7 +190,8 @@ const DEFAULT_JOBS = [
   }
 ];
 
-let JOBS_DATABASE = [...DEFAULT_JOBS];
+const localJobsData = localStorage.getItem('galaxy_jobs_db');
+let JOBS_DATABASE = localJobsData ? JSON.parse(localJobsData) : [...DEFAULT_JOBS];
 
 async function fetchJobsFromServer() {
   try {
@@ -201,10 +202,11 @@ async function fetchJobsFromServer() {
     const data = await res.json();
     if (data && Array.isArray(data)) {
       JOBS_DATABASE = data;
+      localStorage.setItem('galaxy_jobs_db', JSON.stringify(data));
       renderActiveView(); // Update page with dynamic job count and content
     }
   } catch (err) {
-    console.error("Failed to load jobs from backend, using default fallback:", err);
+    console.error("Failed to load jobs from backend, using local/cached database:", err);
   }
 }
 
@@ -1634,6 +1636,7 @@ async function handleEmployerJobPosting(event) {
     
     // Add locally to JOBS_DATABASE in memory
     JOBS_DATABASE.unshift(localNewJob);
+    localStorage.setItem('galaxy_jobs_db', JSON.stringify(JOBS_DATABASE));
     showNotification(`Success! ${title} has been listed locally (Client fallback).`);
     
     // Update active view (re-render jobs board if currently open)
@@ -1682,6 +1685,7 @@ async function handleDeleteJob(jobId) {
     const initialLength = JOBS_DATABASE.length;
     JOBS_DATABASE = JOBS_DATABASE.filter(j => j.id !== jobId);
     if (JOBS_DATABASE.length < initialLength) {
+      localStorage.setItem('galaxy_jobs_db', JSON.stringify(JOBS_DATABASE));
       showNotification("Job posting deleted locally (Client fallback).");
       navigateToEmployerDashboard();
     } else {
