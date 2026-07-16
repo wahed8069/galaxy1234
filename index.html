@@ -218,49 +218,37 @@
         }
       </style>
       <div class="modal-close" onclick="closeResumeUploadModal()">✕</div>
+      <h3 class="modal-title" style="font-size: 1.2rem; margin-bottom: 0.2rem;">Apply for Job</h3>
+      <p class="modal-subtitle" style="font-size: 0.75rem; margin-bottom: 0.8rem;">Enter your professional details to submit your application.</p>
       
-      <!-- Form View -->
-      <div id="app-form-view">
-        <h3 class="modal-title" style="font-size: 1.2rem; margin-bottom: 0.2rem;">Apply for Job</h3>
-        <p class="modal-subtitle" style="font-size: 0.75rem; margin-bottom: 0.8rem;">Enter your professional details to initiate your application.</p>
+      <form onsubmit="handleJobApplicationSubmit(event)">
+        <div class="form-group">
+          <label>Candidate Name</label>
+          <input type="text" id="app-name" class="form-control" placeholder="E.g., Hamdan Al-Neyadi" required>
+        </div>
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" id="app-email" class="form-control" placeholder="hamdan@gmail.com" required>
+        </div>
+        <div class="form-group">
+          <label>Phone Number</label>
+          <input type="tel" id="app-phone" class="form-control" placeholder="E.g., +91 85890 26612" required>
+        </div>
+        <div class="form-group">
+          <label>Location</label>
+          <input type="text" id="app-location" class="form-control" placeholder="E.g., Berlin, Germany" required>
+        </div>
+        <div class="form-group">
+          <label>Job Title</label>
+          <input type="text" id="app-job-title" class="form-control" readonly>
+        </div>
+        <div class="form-group">
+          <label>Experience / Brief Summary</label>
+          <input type="text" id="app-experience" class="form-control" placeholder="E.g., 5 years in Software Engineering" required>
+        </div>
         
-        <form onsubmit="handleJobApplicationSubmit(event)">
-          <div class="form-group">
-            <label>Candidate Name</label>
-            <input type="text" id="app-name" class="form-control" placeholder="E.g., Hamdan Al-Neyadi" required>
-          </div>
-          <div class="form-group">
-            <label>Email Address</label>
-            <input type="email" id="app-email" class="form-control" placeholder="hamdan@gmail.com" required>
-          </div>
-          <div class="form-group">
-            <label>Phone Number</label>
-            <input type="tel" id="app-phone" class="form-control" placeholder="E.g., +91 85890 26612" required>
-          </div>
-          <div class="form-group">
-            <label>Location</label>
-            <input type="text" id="app-location" class="form-control" placeholder="E.g., Berlin, Germany" required>
-          </div>
-          <div class="form-group">
-            <label>Job Title</label>
-            <input type="text" id="app-job-title" class="form-control" readonly>
-          </div>
-          <div class="form-group">
-            <label>Experience / Brief Summary</label>
-            <input type="text" id="app-experience" class="form-control" placeholder="E.g., 5 years in Software Engineering" required>
-          </div>
-          
-          <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center;">Apply</button>
-        </form>
-      </div>
-
-      <!-- Success View -->
-      <div id="app-success-view" style="display: none; text-align: center; padding: 1.5rem 0.5rem;">
-        <div style="width: 56px; height: 56px; border-radius: 50%; background: rgba(16, 185, 129, 0.1); color: #10b981; display: inline-flex; align-items: center; justify-content: center; font-size: 1.8rem; margin-bottom: 1rem; font-weight: bold;">✓</div>
-        <h3 style="font-size: 1.25rem; color: var(--midnight-blue); margin-bottom: 0.4rem; font-weight: 700;">Apply Successful</h3>
-        <p style="font-size: 0.8rem; color: var(--slate-text); line-height: 1.4; margin-bottom: 0.5rem;">Your application details have been registered successfully.</p>
-        <p style="font-size: 0.75rem; color: var(--slate-text); font-style: italic;">Our team will review your profile shortly.</p>
-      </div>
+        <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center;">Apply</button>
+      </form>
     </div>
   </div>
 

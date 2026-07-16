@@ -153,60 +153,6 @@ app.delete('/api/jobs/:id', (req, res) => {
   }
 });
 
-// 5. Submit Job Application & Send Auto-WhatsApp Dispatch (via UltraMsg)
-app.post('/api/apply', async (req, res) => {
-  const { name, email, phone, location, jobTitle, experience, company, salary, jobLocation } = req.body;
-  
-  console.log(`\n--- NEW JOB APPLICATION SUBMITTED ---`);
-  console.log(`Candidate Name: ${name}`);
-  console.log(`Email Address:  ${email}`);
-  console.log(`Phone Number:   ${phone}`);
-  console.log(`Location:       ${location}`);
-  console.log(`Job Title:      ${jobTitle} at ${company}`);
-  console.log(`Experience:     ${experience}`);
-  console.log(`-------------------------------------\n`);
-  
-  const messageText = `Hello, I'd like to apply for the job:\n\n*Job:* ${jobTitle}\n*Company:* ${company}\n*Salary:* ${salary}\n*Location:* ${jobLocation}\n\n*Candidate Details:*\n- *Name:* ${name}\n- *Email:* ${email}\n- *Phone:* ${phone}\n- *Location:* ${location}\n- *Experience:* ${experience}`;
-
-  const instanceId = process.env.ULTRAMSG_INSTANCE_ID || '';
-  const token = process.env.ULTRAMSG_TOKEN || '';
-  const recipientPhone = process.env.ULTRAMSG_RECIPIENT_PHONE || '918589026612';
-
-  try {
-    if (instanceId && token) {
-      console.log(`Sending WhatsApp message via UltraMsg (Instance: ${instanceId})...`);
-      const response = await fetch(`https://api.ultramsg.com/${instanceId}/messages/chat`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          token: token,
-          to: recipientPhone,
-          body: messageText
-        })
-      });
-      const data = await response.json();
-      console.log('UltraMsg API response:', data);
-    } else {
-      console.log(`--- UltraMsg Credentials Missing ---`);
-      console.log(`Message would be sent to: ${recipientPhone}`);
-      console.log(`Message Content: \n${messageText}\n`);
-    }
-
-    res.json({
-      success: true,
-      message: 'Application registered and sent to WhatsApp automatically.'
-    });
-  } catch (err) {
-    console.error('Error dispatching WhatsApp from backend via UltraMsg:', err);
-    res.json({
-      success: true,
-      message: 'Application registered (WhatsApp dispatch failed).'
-    });
-  }
-});
-
 // Serve main client
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));

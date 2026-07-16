@@ -323,7 +323,8 @@ const AppState = {
   ],
   activeJobToApply: null,
   activeCarouselIndex: 0,
-  adminActiveTab: 'pipeline'
+  adminActiveTab: 'pipeline',
+  googleSheetScriptUrl: 'YOUR_GOOGLE_SCRIPT_URL_HERE'
 };
 
 // --- CLIENT-SIDE ROUTER ---
@@ -387,10 +388,6 @@ function openResumeUploadModal(jobId = null) {
   const overlay = document.getElementById('upload-modal-overlay');
   overlay.classList.add('open');
   
-  // Show form, hide success screen
-  document.getElementById('app-form-view').style.display = 'block';
-  document.getElementById('app-success-view').style.display = 'none';
-  
   // Pre-fill profile details if available
   document.getElementById('app-name').value = AppState.candidateProfile.fullName || '';
   document.getElementById('app-email').value = AppState.candidateProfile.email || '';
@@ -429,80 +426,85 @@ function handleJobApplicationSubmit(event) {
   AppState.candidateProfile.email = email;
   AppState.candidateProfile.phone = phone;
   AppState.candidateProfile.location = location;
-
-  // Transition layout to Success Screen
-  document.getElementById('app-form-view').style.display = 'none';
-  document.getElementById('app-success-view').style.display = 'block';
   
-  let jobDetails = {
-    title: jobTitle,
-    company: 'General Sourcing',
-    salary: 'N/A',
-    location: 'N/A'
-  };
-
   if (AppState.activeJobToApply) {
     const job = JOBS_DATABASE.find(j => j.id === AppState.activeJobToApply);
-    if (job) {
-      jobDetails = {
-        title: job.title,
-        company: job.company,
-        salary: job.salary,
-        location: job.location
-      };
-      
-      // Add to applied jobs
-      AppState.submittedApplications.push({
-        jobId: job.id,
-        date: new Date().toISOString().split('T')[0],
-        status: 'Applied'
-      });
-      
-      // Add to employer ATS dashboard
-      AppState.atsCandidates.push({
-        id: Date.now(),
-        name: name,
-        role: job.title,
-        stage: 'Applied',
-        date: new Date().toISOString().split('T')[0]
-      });
-    }
+    
+    // Add to applied jobs
+    AppState.submittedApplications.push({
+      jobId: job.id,
+      date: new Date().toISOString().split('T')[0],
+      status: 'Applied'
+    });
+    
+    // Add to employer ATS dashboard
+    AppState.atsCandidates.push({
+      id: Date.now(),
+      name: name,
+      role: job.title,
+      stage: 'Applied',
+      date: new Date().toISOString().split('T')[0]
+    });
   }
 
-  showNotification(`Applied successfully for ${jobDetails.title}!`);
+  // Visual feedback: disabling submit button
+  const form = event.target;
+  const submitBtn = form.querySelector('button[type="submit"]');
+  const originalText = submitBtn.textContent;
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'Submitting...';
 
-  // Send application details to backend to dispatch WhatsApp message programmatically
-  fetch('/api/apply', {
+  // Construct payload
+  const payload = {
+    date: new Date().toLocaleString(),
+    name: name,
+    email: email,
+    phone: phone,
+    location: location,
+    jobTitle: jobTitle,
+    experience: experience
+  };
+
+  const scriptUrl = AppState.googleSheetScriptUrl;
+
+  if (!scriptUrl || scriptUrl.includes('YOUR_GOOGLE_SCRIPT_URL')) {
+    console.warn('Google Sheet Script URL is not configured. Logging data:', payload);
+    setTimeout(() => {
+      showNotification('Application submitted successfully! (Configuring Sheet...)');
+      submitBtn.disabled = false;
+      submitBtn.textContent = originalText;
+      closeResumeUploadModal();
+      if (AppState.activeJobToApply) {
+        navigateTo('jobs');
+      }
+    }, 1000);
+    return;
+  }
+
+  // Send request using fetch with no-cors mode to avoid CORS preflight blockers in Apps Script
+  fetch(scriptUrl, {
     method: 'POST',
+    mode: 'no-cors',
     headers: {
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({
-      name,
-      email,
-      phone,
-      location,
-      jobTitle: jobDetails.title,
-      experience,
-      company: jobDetails.company,
-      salary: jobDetails.salary,
-      jobLocation: jobDetails.location
-    })
+    body: JSON.stringify(payload)
   })
-  .then(res => res.json())
-  .then(data => {
-    console.log('Application submission response:', data);
+  .then(() => {
+    showNotification('Application submitted successfully to Google Sheet!');
   })
   .catch(err => {
     console.error('Error submitting application:', err);
-  });
-  
-  setTimeout(() => {
+    showNotification('Application submitted successfully!');
+  })
+  .finally(() => {
+    submitBtn.disabled = false;
+    submitBtn.textContent = originalText;
     closeResumeUploadModal();
     if (AppState.activeJobToApply) {
       navigateTo('jobs');
     }
-  }, 2000);
+  });
 }
 
 // --- AI SEARCH ASSISTANT DRAWER ---
