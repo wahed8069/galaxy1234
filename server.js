@@ -1,22 +1,10 @@
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
-const nodemailer = require('nodemailer');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 const JOBS_FILE = path.join(__dirname, 'jobs.json');
-
-// Configure NodeMailer transporter (defaults to Gmail)
-const transporter = nodemailer.createTransport({
-  host: process.env.EMAIL_HOST || 'smtp.gmail.com',
-  port: parseInt(process.env.EMAIL_PORT || '465'),
-  secure: process.env.EMAIL_PORT !== '587', // true for 465, false for 587
-  auth: {
-    user: process.env.EMAIL_USER || '', // your sender email (e.g. Gmail address)
-    pass: process.env.EMAIL_PASS || ''  // your sender password or App Password
-  }
-});
 
 // Middleware
 app.use(express.json());
@@ -165,7 +153,7 @@ app.delete('/api/jobs/:id', (req, res) => {
   }
 });
 
-// 5. Submit Job Application & Send Auto-Email Dispatch
+// 5. Submit Job Application & Send Auto-WhatsApp Dispatch (via UltraMsg)
 app.post('/api/apply', async (req, res) => {
   const { name, email, phone, location, jobTitle, experience, company, salary, jobLocation } = req.body;
   
@@ -178,72 +166,43 @@ app.post('/api/apply', async (req, res) => {
   console.log(`Experience:     ${experience}`);
   console.log(`-------------------------------------\n`);
   
-  const recipientEmail = process.env.EMAIL_TO || 'info.galaxyventureuae@gmail.com';
-  const senderEmail = process.env.EMAIL_USER || 'info.galaxyventureuae@gmail.com';
+  const messageText = `Hello, I'd like to apply for the job:\n\n*Job:* ${jobTitle}\n*Company:* ${company}\n*Salary:* ${salary}\n*Location:* ${jobLocation}\n\n*Candidate Details:*\n- *Name:* ${name}\n- *Email:* ${email}\n- *Phone:* ${phone}\n- *Location:* ${location}\n- *Experience:* ${experience}`;
 
-  const mailOptions = {
-    from: `"Galaxy Venture Desk" <${senderEmail}>`,
-    to: recipientEmail,
-    subject: `New Job Application: ${jobTitle} - ${name}`,
-    text: `New Job Application Received!\n\nCandidate Details:\n- Name: ${name}\n- Email: ${email}\n- Phone: ${phone}\n- Location: ${location}\n- Experience: ${experience}\n\nJob Details:\n- Title: ${jobTitle}\n- Company: ${company}\n- Salary: ${salary}\n- Location: ${jobLocation}\n\n---\nGalaxy Venture Sourcing System`,
-    html: `
-      <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; border: 1px solid #ddd; padding: 20px; border-radius: 8px;">
-        <h2 style="color: #1e3a8a; border-bottom: 2px solid #3b82f6; padding-bottom: 8px;">New Job Application</h2>
-        <p><strong>Job Title:</strong> ${jobTitle}</p>
-        <p><strong>Company:</strong> ${company}</p>
-        <p><strong>Salary Range:</strong> ${salary}</p>
-        <p><strong>Job Location:</strong> ${jobLocation}</p>
-        
-        <h3 style="color: #1e3a8a; margin-top: 20px; border-bottom: 1px solid #eee; padding-bottom: 4px;">Candidate Information</h3>
-        <table style="width: 100%; border-collapse: collapse;">
-          <tr>
-            <td style="padding: 6px 0; font-weight: bold; width: 140px;">Name:</td>
-            <td style="padding: 6px 0;">${name}</td>
-          </tr>
-          <tr>
-            <td style="padding: 6px 0; font-weight: bold;">Email:</td>
-            <td style="padding: 6px 0;"><a href="mailto:${email}">${email}</a></td>
-          </tr>
-          <tr>
-            <td style="padding: 6px 0; font-weight: bold;">Phone:</td>
-            <td style="padding: 6px 0;">${phone}</td>
-          </tr>
-          <tr>
-            <td style="padding: 6px 0; font-weight: bold;">Location:</td>
-            <td style="padding: 6px 0;">${location}</td>
-          </tr>
-          <tr>
-            <td style="padding: 6px 0; font-weight: bold;">Experience:</td>
-            <td style="padding: 6px 0;">${experience}</td>
-          </tr>
-        </table>
-        <br>
-        <p style="font-size: 0.8rem; color: #666; border-top: 1px solid #eee; padding-top: 8px;">This is an automated notification from the Galaxy Venture application system.</p>
-      </div>
-    `
-  };
+  const instanceId = process.env.ULTRAMSG_INSTANCE_ID || '';
+  const token = process.env.ULTRAMSG_TOKEN || '';
+  const recipientPhone = process.env.ULTRAMSG_RECIPIENT_PHONE || '918589026612';
 
   try {
-    if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
-      console.log(`Sending application email to ${recipientEmail}...`);
-      await transporter.sendMail(mailOptions);
-      console.log('Email sent successfully!');
+    if (instanceId && token) {
+      console.log(`Sending WhatsApp message via UltraMsg (Instance: ${instanceId})...`);
+      const response = await fetch(`https://api.ultramsg.com/${instanceId}/messages/chat`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          token: token,
+          to: recipientPhone,
+          body: messageText
+        })
+      });
+      const data = await response.json();
+      console.log('UltraMsg API response:', data);
     } else {
-      console.log('--- SMTP Credentials Missing ---');
-      console.log(`Email would be sent to: ${recipientEmail}`);
-      console.log(`Subject: ${mailOptions.subject}`);
-      console.log(`Content: \n${mailOptions.text}\n`);
+      console.log(`--- UltraMsg Credentials Missing ---`);
+      console.log(`Message would be sent to: ${recipientPhone}`);
+      console.log(`Message Content: \n${messageText}\n`);
     }
 
     res.json({
       success: true,
-      message: 'Application registered and sent via email successfully.'
+      message: 'Application registered and sent to WhatsApp automatically.'
     });
   } catch (err) {
-    console.error('Error dispatching application email from backend:', err);
+    console.error('Error dispatching WhatsApp from backend via UltraMsg:', err);
     res.json({
       success: true,
-      message: 'Application registered (Email server offline).'
+      message: 'Application registered (WhatsApp dispatch failed).'
     });
   }
 });
