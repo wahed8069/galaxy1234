@@ -387,6 +387,10 @@ function openResumeUploadModal(jobId = null) {
   const overlay = document.getElementById('upload-modal-overlay');
   overlay.classList.add('open');
   
+  // Show form, hide success screen
+  document.getElementById('app-form-view').style.display = 'block';
+  document.getElementById('app-success-view').style.display = 'none';
+  
   // Pre-fill profile details if available
   document.getElementById('app-name').value = AppState.candidateProfile.fullName || '';
   document.getElementById('app-email').value = AppState.candidateProfile.email || '';
@@ -425,6 +429,10 @@ function handleJobApplicationSubmit(event) {
   AppState.candidateProfile.email = email;
   AppState.candidateProfile.phone = phone;
   AppState.candidateProfile.location = location;
+
+  // Transition layout to Success Screen
+  document.getElementById('app-form-view').style.display = 'none';
+  document.getElementById('app-success-view').style.display = 'block';
   
   if (AppState.activeJobToApply) {
     const job = JOBS_DATABASE.find(j => j.id === AppState.activeJobToApply);
@@ -455,7 +463,7 @@ function handleJobApplicationSubmit(event) {
       window.location.href = whatsappUrl;
       closeResumeUploadModal();
       navigateTo('jobs');
-    }, 1000);
+    }, 1500);
   } else {
     showNotification("General application submitted!");
     
@@ -466,7 +474,7 @@ function handleJobApplicationSubmit(event) {
     setTimeout(() => {
       window.location.href = whatsappUrl;
       closeResumeUploadModal();
-    }, 1000);
+    }, 1500);
   }
 }
 
