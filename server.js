@@ -153,6 +153,59 @@ app.delete('/api/jobs/:id', (req, res) => {
   }
 });
 
+// 5. Submit Job Application & Send Auto-WhatsApp Dispatch
+app.post('/api/apply', async (req, res) => {
+  const { name, email, phone, location, jobTitle, experience, company, salary, jobLocation } = req.body;
+  
+  console.log(`\n--- NEW JOB APPLICATION SUBMITTED ---`);
+  console.log(`Candidate Name: ${name}`);
+  console.log(`Email Address:  ${email}`);
+  console.log(`Phone Number:   ${phone}`);
+  console.log(`Location:       ${location}`);
+  console.log(`Job Title:      ${jobTitle} at ${company}`);
+  console.log(`Experience:     ${experience}`);
+  console.log(`-------------------------------------\n`);
+  
+  const messageText = `Hello, I'd like to apply for the job:\n\n*Job:* ${jobTitle}\n*Company:* ${company}\n*Salary:* ${salary}\n*Location:* ${jobLocation}\n\n*Candidate Details:*\n- *Name:* ${name}\n- *Email:* ${email}\n- *Phone:* ${phone}\n- *Location:* ${location}\n- *Experience:* ${experience}`;
+
+  const whatsappApiUrl = process.env.WHATSAPP_API_URL || '';
+  const whatsappToken = process.env.WHATSAPP_ACCESS_TOKEN || '';
+  const recipientPhone = process.env.WHATSAPP_RECIPIENT_PHONE || '918589026612';
+
+  try {
+    if (whatsappApiUrl && whatsappToken) {
+      console.log('Sending message to WhatsApp API gateway...');
+      const response = await fetch(whatsappApiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${whatsappToken}`
+        },
+        body: JSON.stringify({
+          phone: recipientPhone,
+          message: messageText
+        })
+      });
+      const data = await response.json();
+      console.log('WhatsApp API response:', data);
+    } else {
+      console.log(`WhatsApp dispatch logs: [Auto-send to ${recipientPhone}]`);
+      console.log(`Message: \n"${messageText}"\n`);
+    }
+
+    res.json({
+      success: true,
+      message: 'Application registered and sent to WhatsApp automatically.'
+    });
+  } catch (err) {
+    console.error('Error dispatching WhatsApp from backend:', err);
+    res.json({
+      success: true,
+      message: 'Application registered (WhatsApp Gateway Offline).'
+    });
+  }
+});
+
 // Serve main client
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));

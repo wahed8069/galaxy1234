@@ -434,48 +434,75 @@ function handleJobApplicationSubmit(event) {
   document.getElementById('app-form-view').style.display = 'none';
   document.getElementById('app-success-view').style.display = 'block';
   
+  let jobDetails = {
+    title: jobTitle,
+    company: 'General Sourcing',
+    salary: 'N/A',
+    location: 'N/A'
+  };
+
   if (AppState.activeJobToApply) {
     const job = JOBS_DATABASE.find(j => j.id === AppState.activeJobToApply);
-    
-    // Add to applied jobs
-    AppState.submittedApplications.push({
-      jobId: job.id,
-      date: new Date().toISOString().split('T')[0],
-      status: 'Applied'
-    });
-    
-    // Add to employer ATS dashboard
-    AppState.atsCandidates.push({
-      id: Date.now(),
-      name: name,
-      role: job.title,
-      stage: 'Applied',
-      date: new Date().toISOString().split('T')[0]
-    });
-    
-    showNotification(`Applied successfully for ${job.title}!`);
-    
-    // Generate WhatsApp URL
-    const message = `Hello, I'd like to apply for the job:\n\n*Job:* ${job.title}\n*Company:* ${job.company}\n*Salary:* ${job.salary}\n*Location:* ${job.location}\n\n*Candidate Details:*\n- *Name:* ${name}\n- *Email:* ${email}\n- *Phone:* ${phone}\n- *Location:* ${location}\n- *Experience:* ${experience}`;
-    const whatsappUrl = `https://api.whatsapp.com/send?phone=918589026612&text=${encodeURIComponent(message)}`;
-    
-    setTimeout(() => {
-      window.location.href = whatsappUrl;
-      closeResumeUploadModal();
-      navigateTo('jobs');
-    }, 1500);
-  } else {
-    showNotification("General application submitted!");
-    
-    // Generate General WhatsApp URL
-    const message = `Hello, I'd like to submit a general job application.\n\n*Candidate Details:*\n- *Name:* ${name}\n- *Email:* ${email}\n- *Phone:* ${phone}\n- *Location:* ${location}\n- *Experience:* ${experience}`;
-    const whatsappUrl = `https://api.whatsapp.com/send?phone=918589026612&text=${encodeURIComponent(message)}`;
-    
-    setTimeout(() => {
-      window.location.href = whatsappUrl;
-      closeResumeUploadModal();
-    }, 1500);
+    if (job) {
+      jobDetails = {
+        title: job.title,
+        company: job.company,
+        salary: job.salary,
+        location: job.location
+      };
+      
+      // Add to applied jobs
+      AppState.submittedApplications.push({
+        jobId: job.id,
+        date: new Date().toISOString().split('T')[0],
+        status: 'Applied'
+      });
+      
+      // Add to employer ATS dashboard
+      AppState.atsCandidates.push({
+        id: Date.now(),
+        name: name,
+        role: job.title,
+        stage: 'Applied',
+        date: new Date().toISOString().split('T')[0]
+      });
+    }
   }
+
+  showNotification(`Applied successfully for ${jobDetails.title}!`);
+
+  // Send application details to backend to dispatch WhatsApp message programmatically
+  fetch('/api/apply', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      name,
+      email,
+      phone,
+      location,
+      jobTitle: jobDetails.title,
+      experience,
+      company: jobDetails.company,
+      salary: jobDetails.salary,
+      jobLocation: jobDetails.location
+    })
+  })
+  .then(res => res.json())
+  .then(data => {
+    console.log('Application submission response:', data);
+  })
+  .catch(err => {
+    console.error('Error submitting application:', err);
+  });
+  
+  setTimeout(() => {
+    closeResumeUploadModal();
+    if (AppState.activeJobToApply) {
+      navigateTo('jobs');
+    }
+  }, 2000);
 }
 
 // --- AI SEARCH ASSISTANT DRAWER ---
