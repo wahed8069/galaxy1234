@@ -324,7 +324,7 @@ const AppState = {
   activeJobToApply: null,
   activeCarouselIndex: 0,
   adminActiveTab: 'pipeline',
-  googleSheetScriptUrl: 'https://script.google.com/macros/s/AKfycbxyzquSxzly66MEWylELrn8x8YPWECXzSuR9Da1DywBD4QLrLyKmklm8e0BSJ9dvtM/exec'
+  googleSheetScriptUrl: 'https://script.google.com/macros/s/AKfycbymgCRLHMtwezzoJf_7N_XZw1yCxEQJa6byb2E4xuj1qskvQGlOyo8_WU0x6sD4tos/exec'
 };
 
 // --- CLIENT-SIDE ROUTER ---
