@@ -197,12 +197,31 @@
 
   <!-- JOB APPLICATION MODAL -->
   <div class="modal-overlay" id="upload-modal-overlay">
-    <div class="modal-content">
+    <div class="modal-content" style="max-width: 380px; padding: 1.2rem 1.5rem;">
+      <style>
+        #upload-modal-overlay .form-group {
+          margin-bottom: 0.6rem;
+        }
+        #upload-modal-overlay .form-group label {
+          font-size: 0.75rem;
+          margin-bottom: 0.15rem;
+        }
+        #upload-modal-overlay .form-control {
+          padding: 0.35rem 0.6rem;
+          font-size: 0.8rem;
+          height: auto;
+        }
+        #upload-modal-overlay .btn-primary {
+          padding: 0.45rem 1rem;
+          font-size: 0.85rem;
+          margin-top: 1rem !important;
+        }
+      </style>
       <div class="modal-close" onclick="closeResumeUploadModal()">✕</div>
-      <h3 class="modal-title">Apply for Job</h3>
-      <p class="modal-subtitle">Enter your professional details to initiate your application via WhatsApp.</p>
+      <h3 class="modal-title" style="font-size: 1.2rem; margin-bottom: 0.2rem;">Apply for Job</h3>
+      <p class="modal-subtitle" style="font-size: 0.75rem; margin-bottom: 0.8rem;">Enter your professional details to initiate your application via WhatsApp.</p>
       
-      <form onsubmit="handleJobApplicationSubmit(event)" style="margin-top: 1rem;">
+      <form onsubmit="handleJobApplicationSubmit(event)">
         <div class="form-group">
           <label>Candidate Name</label>
           <input type="text" id="app-name" class="form-control" placeholder="E.g., Hamdan Al-Neyadi" required>
@@ -216,6 +235,10 @@
           <input type="tel" id="app-phone" class="form-control" placeholder="E.g., +91 85890 26612" required>
         </div>
         <div class="form-group">
+          <label>Location</label>
+          <input type="text" id="app-location" class="form-control" placeholder="E.g., Berlin, Germany" required>
+        </div>
+        <div class="form-group">
           <label>Job Title</label>
           <input type="text" id="app-job-title" class="form-control" readonly>
         </div>
@@ -224,7 +247,7 @@
           <input type="text" id="app-experience" class="form-control" placeholder="E.g., 5 years in Software Engineering" required>
         </div>
         
-        <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center; margin-top:1.5rem;">Apply Now via WhatsApp</button>
+        <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center;">Apply Now via WhatsApp</button>
       </form>
     </div>
   </div>
