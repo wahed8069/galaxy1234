@@ -453,6 +453,14 @@ function handleResumeFileSelect(file) {
             });
             
             showNotification(`Applied successfully for ${job.title}!`);
+
+            // Generate WhatsApp message and redirect to WhatsApp number 8589026612
+            const message = `Hello, I'd like to apply for the job:\n\n*Job:* ${job.title}\n*Company:* ${job.company}\n*Salary:* ${job.salary}\n*Location:* ${job.location}\n\n*Candidate Details:*\n- *Name:* ${AppState.candidateProfile.fullName}\n- *Email:* ${AppState.candidateProfile.email}\n- *Phone:* ${AppState.candidateProfile.phone}\n- *Resume:* ${AppState.candidateProfile.resumeName}`;
+            const whatsappUrl = `https://wa.me/918589026612?text=${encodeURIComponent(message)}`;
+            
+            setTimeout(() => {
+              window.open(whatsappUrl, '_blank');
+            }, 1000);
           } else {
             showNotification("CV uploaded and candidate profile updated.");
           }
