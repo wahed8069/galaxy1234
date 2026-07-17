@@ -1309,6 +1309,81 @@ function getHomeTemplate() {
       </div>
     </section>
 
+    <!-- FAQ Accordion Section -->
+    <section class="faq-section" style="padding: var(--spacing-xl) 0; background:#ffffff; border-top:1px solid #e2e8f0;">
+      <div class="container FAQ-grid">
+        <!-- Left Column -->
+        <div class="faq-left">
+          <span class="faq-pretitle" style="color: var(--cosmic-purple); font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 0.5rem;">FAQ</span>
+          <h2 class="faq-main-title" style="font-size: 2.25rem; font-weight: 700; color: var(--midnight-blue); line-height: 1.2; margin-bottom: 1rem;">Frequently Asked<br>Questions</h2>
+          <p class="faq-subtitle" style="color: var(--slate-text); font-size: 0.95rem; line-height: 1.5; max-width: 320px;">We compiled a list of answers to address your most pressing questions regarding our Services.</p>
+        </div>
+        
+        <!-- Right Column -->
+        <div class="faq-accordion-container">
+          <div class="faq-item">
+            <button class="faq-question-btn" onclick="toggleFaqItem(this)">
+              <span>What types of jobs does Galaxy Venture recruit for?</span>
+              <span class="faq-toggle-icon">+</span>
+            </button>
+            <div class="faq-answer-wrapper">
+              <div class="faq-answer-content">
+                <p>We specialize in permanent staffing, IT & Tech Infrastructure, Healthcare (including DHA, MOHRE clinical placements), Engineering, Executive Search, and Corporate Administration roles across Europe and the Gulf region.</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="faq-item">
+            <button class="faq-question-btn" onclick="toggleFaqItem(this)">
+              <span>How does the recruitment process work for candidates?</span>
+              <span class="faq-toggle-icon">+</span>
+            </button>
+            <div class="faq-answer-wrapper">
+              <div class="faq-answer-content">
+                <p>Candidates can apply for listed positions or submit their resume to our general talent pool. Once our team screens your application, qualified candidates undergo profile vetting, recruiter interviews, and mock trials before alignment with premium corporate partners.</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="faq-item">
+            <button class="faq-question-btn" onclick="toggleFaqItem(this)">
+              <span>What service fees do candidates pay?</span>
+              <span class="faq-toggle-icon">+</span>
+            </button>
+            <div class="faq-answer-wrapper">
+              <div class="faq-answer-content">
+                <p>Absolutely none. Galaxy Venture operates as a corporate-retained search firm. All placement, visa registration guidance, and credential checks are funded entirely by our partner employers. We never charge candidates for applying or landing roles.</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="faq-item">
+            <button class="faq-question-btn" onclick="toggleFaqItem(this)">
+              <span>How does Galaxy Venture assist with relocation and compliance?</span>
+              <span class="faq-toggle-icon">+</span>
+            </button>
+            <div class="faq-answer-wrapper">
+              <div class="faq-answer-content">
+                <p>We provide full compliance advisory, assisting with document attestation guidance, MOHRE registration, DHA/HAAD license conversions, and onboarding. For international relocations, we coordinate with the employer’s visa agent to ensure quick, smooth onboarding.</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="faq-item">
+            <button class="faq-question-btn" onclick="toggleFaqItem(this)">
+              <span>How can employers start hiring through Galaxy Venture?</span>
+              <span class="faq-toggle-icon">+</span>
+            </button>
+            <div class="faq-answer-wrapper">
+              <div class="faq-answer-content">
+                <p>Employers can submit a hiring request by clicking the "Hire Talent" button at the top header, or by emailing us directly. We'll set up a consultation call to detail our retainer options, custom service level agreements, and sourcing pipelines.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- CTA Contact section -->
     <section class="section-padding" style="background:#f8fafc; border-top: 1px solid #e2e8f0;">
       <div class="container" style="text-align:center; max-width:800px;">
@@ -2438,6 +2513,34 @@ function moveCandidateToStage(candId, stage) {
     cand.stage = stage;
     showNotification(`Candidate ${cand.name} moved to ${stage}`);
     renderAtsCandidates();
+  }
+}
+
+// --- FAQ UTILITIES ---
+function toggleFaqItem(btn) {
+  const faqItem = btn.closest('.faq-item');
+  const wrapper = faqItem.querySelector('.faq-answer-wrapper');
+  const icon = faqItem.querySelector('.faq-toggle-icon');
+  const isActive = faqItem.classList.contains('active');
+  
+  // Close all other FAQ items for a clean accordion experience
+  document.querySelectorAll('.faq-item').forEach(item => {
+    if (item !== faqItem && item.classList.contains('active')) {
+      item.classList.remove('active');
+      item.querySelector('.faq-answer-wrapper').style.maxHeight = '0px';
+      item.querySelector('.faq-toggle-icon').textContent = '+';
+    }
+  });
+  
+  if (isActive) {
+    faqItem.classList.remove('active');
+    wrapper.style.maxHeight = '0px';
+    icon.textContent = '+';
+  } else {
+    faqItem.classList.add('active');
+    // Animate smoothly to its content height
+    wrapper.style.maxHeight = wrapper.scrollHeight + 'px';
+    icon.textContent = '−'; // minus sign
   }
 }
 
