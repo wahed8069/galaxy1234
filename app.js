@@ -321,6 +321,38 @@ const AppState = {
     { id: 104, name: 'Leila Farooq', role: 'Financial Analyst', stage: 'Interview', date: '2026-06-18' },
     { id: 105, name: 'Robert Blake', role: 'Petroleum Geologist', stage: 'Placed', date: '2026-06-15' }
   ],
+  appliedSubmissions: [
+    {
+      id: 201,
+      name: 'Tariq Mahmood',
+      email: 'tariq.m@gmail.com',
+      phone: '+971 50 987 6543',
+      location: 'London, UK',
+      jobTitle: 'Senior Software Engineer (Full Stack)',
+      experience: '8 years in React & Node.js development',
+      date: '2026-06-22'
+    },
+    {
+      id: 202,
+      name: 'Nisha Pillai',
+      email: 'nisha.pillai@outlook.com',
+      phone: '+91 94460 12345',
+      location: 'Kochi, India',
+      jobTitle: 'Registered Nurse',
+      experience: '5 years in Intensive Care Unit (ICU)',
+      date: '2026-06-23'
+    },
+    {
+      id: 203,
+      name: 'Michael Vance',
+      email: 'm.vance@yahoo.com',
+      phone: '+44 7911 123456',
+      location: 'Dublin, Ireland',
+      jobTitle: 'Operations Project Manager',
+      experience: '6 years managing infrastructure initiatives',
+      date: '2026-06-19'
+    }
+  ],
   activeJobToApply: null,
   activeCarouselIndex: 0,
   adminActiveTab: 'pipeline'
@@ -391,7 +423,7 @@ function openResumeUploadModal(jobId = null) {
   document.getElementById('app-name').value = AppState.candidateProfile.fullName || '';
   document.getElementById('app-email').value = AppState.candidateProfile.email || '';
   document.getElementById('app-phone').value = AppState.candidateProfile.phone || '';
-  document.getElementById('app-country').value = AppState.candidateProfile.country || '';
+  document.getElementById('app-location').value = AppState.candidateProfile.location || '';
   document.getElementById('app-experience').value = '';
   
   if (jobId) {
@@ -416,81 +448,70 @@ function handleJobApplicationSubmit(event) {
   const name = document.getElementById('app-name').value.trim();
   const email = document.getElementById('app-email').value.trim();
   const phone = document.getElementById('app-phone').value.trim();
-  const country = document.getElementById('app-country').value.trim();
+  const location = document.getElementById('app-location').value.trim();
   const jobTitle = document.getElementById('app-job-title').value.trim();
   const experience = document.getElementById('app-experience').value.trim();
   
-  const submitBtn = event.target.querySelector('button[type="submit"]');
-  const originalBtnText = submitBtn.textContent;
-  submitBtn.disabled = true;
-  submitBtn.textContent = 'Submitting application...';
-
-  const payload = {
-    name,
-    email,
-    phone,
-    country,
-    jobTitle,
-    experience
-  };
+  // Update state candidate profile
+  AppState.candidateProfile.fullName = name;
+  AppState.candidateProfile.email = email;
+  AppState.candidateProfile.phone = phone;
+  AppState.candidateProfile.location = location;
   
-  fetch('/api/applications', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(payload)
-  })
-  .then(res => res.json())
-  .then(data => {
-    submitBtn.disabled = false;
-    submitBtn.textContent = originalBtnText;
-
-    if (data.success) {
-      // Update state candidate profile
-      AppState.candidateProfile.fullName = name;
-      AppState.candidateProfile.email = email;
-      AppState.candidateProfile.phone = phone;
-      AppState.candidateProfile.country = country;
-
-      if (AppState.activeJobToApply) {
-        const job = JOBS_DATABASE.find(j => j.id === AppState.activeJobToApply);
-        
-        // Add to applied jobs
-        AppState.submittedApplications.push({
-          jobId: job.id,
-          date: new Date().toISOString().split('T')[0],
-          status: 'Applied'
-        });
-        
-        // Add to employer ATS dashboard
-        AppState.atsCandidates.push({
-          id: Date.now(),
-          name: name,
-          role: job.title,
-          stage: 'Applied',
-          date: new Date().toISOString().split('T')[0]
-        });
-        
-        showNotification(`Applied successfully for ${job.title}!`);
-      } else {
-        showNotification("Application submitted successfully!");
-      }
-      
-      setTimeout(() => {
-        closeResumeUploadModal();
-        navigateTo('jobs');
-      }, 1200);
-    } else {
-      showNotification(`Error: ${data.error || 'Failed to submit application'}`);
-    }
-  })
-  .catch(err => {
-    submitBtn.disabled = false;
-    submitBtn.textContent = originalBtnText;
-    console.error('Error submitting application:', err);
-    showNotification('Network error submitting application. Please try again.');
+  // Add to appliedSubmissions list
+  AppState.appliedSubmissions.push({
+    id: Date.now(),
+    name: name,
+    email: email,
+    phone: phone,
+    location: location,
+    jobTitle: jobTitle,
+    experience: experience,
+    date: new Date().toISOString().split('T')[0]
   });
+  
+  if (AppState.activeJobToApply) {
+    const job = JOBS_DATABASE.find(j => j.id === AppState.activeJobToApply);
+    
+    // Add to applied jobs
+    AppState.submittedApplications.push({
+      jobId: job.id,
+      date: new Date().toISOString().split('T')[0],
+      status: 'Applied'
+    });
+    
+    // Add to employer ATS dashboard
+    AppState.atsCandidates.push({
+      id: Date.now(),
+      name: name,
+      role: job.title,
+      stage: 'Applied',
+      date: new Date().toISOString().split('T')[0]
+    });
+    
+    showNotification(`Applied successfully for ${job.title}!`);
+    
+    // Generate WhatsApp URL
+    const message = `Hello, I'd like to apply for the job:\n\n*Job:* ${job.title}\n*Company:* ${job.company}\n*Salary:* ${job.salary}\n*Location:* ${job.location}\n\n*Candidate Details:*\n- *Name:* ${name}\n- *Email:* ${email}\n- *Phone:* ${phone}\n- *Location:* ${location}\n- *Experience:* ${experience}`;
+    const whatsappUrl = `https://api.whatsapp.com/send?phone=918589026612&text=${encodeURIComponent(message)}`;
+    
+    setTimeout(() => {
+      window.location.href = whatsappUrl;
+      closeResumeUploadModal();
+      navigateTo('jobs');
+    }, 1000);
+  } else {
+    showNotification("General application submitted!");
+    
+    // Generate General WhatsApp URL
+    const message = `Hello, I'd like to submit a general job application.\n\n*Candidate Details:*\n- *Name:* ${name}\n- *Email:* ${email}\n- *Phone:* ${phone}\n- *Location:* ${location}\n- *Experience:* ${experience}`;
+    const whatsappUrl = `https://api.whatsapp.com/send?phone=918589026612&text=${encodeURIComponent(message)}`;
+    
+    setTimeout(() => {
+      window.location.href = whatsappUrl;
+      closeResumeUploadModal();
+    }, 1000);
+  }
 }
 
 // --- AI SEARCH ASSISTANT DRAWER ---
@@ -2108,6 +2129,42 @@ function getEmployerDashboardTemplate() {
         ${jobsListHTML || '<p style="color:var(--slate-text);">No active jobs listed.</p>'}
       </div>
     `;
+  } else if (currentTab === 'applied-submissions') {
+    const rowsHTML = AppState.appliedSubmissions.map(sub => `
+      <tr style="border-bottom: 1px solid #e2e8f0;">
+        <td style="border: 1px solid #e2e8f0; padding: 0.6rem 0.75rem; font-size: 0.8rem; color: var(--midnight-blue); font-weight: 500;">${sub.name}</td>
+        <td style="border: 1px solid #e2e8f0; padding: 0.6rem 0.75rem; font-size: 0.8rem; color: var(--slate-text);">${sub.email}</td>
+        <td style="border: 1px solid #e2e8f0; padding: 0.6rem 0.75rem; font-size: 0.8rem; color: var(--slate-text);">${sub.phone}</td>
+        <td style="border: 1px solid #e2e8f0; padding: 0.6rem 0.75rem; font-size: 0.8rem; color: var(--slate-text);">${sub.location}</td>
+        <td style="border: 1px solid #e2e8f0; padding: 0.6rem 0.75rem; font-size: 0.8rem; color: var(--midnight-blue); font-weight: 600;">${sub.jobTitle}</td>
+        <td style="border: 1px solid #e2e8f0; padding: 0.6rem 0.75rem; font-size: 0.8rem; color: var(--slate-text);">${sub.experience}</td>
+        <td style="border: 1px solid #e2e8f0; padding: 0.6rem 0.75rem; font-size: 0.8rem; color: var(--slate-text);">${sub.date}</td>
+      </tr>
+    `).join('');
+
+    mainPanelHTML = `
+      <h3 style="font-size:1.4rem; color:var(--midnight-blue); margin-bottom:0.5rem;">Applications Sheet</h3>
+      <p style="font-size:0.85rem; color:var(--slate-text); margin-bottom:1.5rem;">Spreadsheet layout of all candidate job applications submitted via the website.</p>
+      
+      <div style="overflow-x: auto; background: white; border: 1px solid #cbd5e1; border-radius: 8px; box-shadow: var(--shadow-sm);">
+        <table style="width: 100%; border-collapse: collapse; text-align: left;">
+          <thead>
+            <tr style="background: #f1f5f9;">
+              <th style="border: 1px solid #cbd5e1; padding: 0.6rem 0.75rem; font-size: 0.8rem; font-weight: 600; color: #475569;">Candidate Name</th>
+              <th style="border: 1px solid #cbd5e1; padding: 0.6rem 0.75rem; font-size: 0.8rem; font-weight: 600; color: #475569;">Email</th>
+              <th style="border: 1px solid #cbd5e1; padding: 0.6rem 0.75rem; font-size: 0.8rem; font-weight: 600; color: #475569;">Phone</th>
+              <th style="border: 1px solid #cbd5e1; padding: 0.6rem 0.75rem; font-size: 0.8rem; font-weight: 600; color: #475569;">Location</th>
+              <th style="border: 1px solid #cbd5e1; padding: 0.6rem 0.75rem; font-size: 0.8rem; font-weight: 600; color: #475569;">Job Title</th>
+              <th style="border: 1px solid #cbd5e1; padding: 0.6rem 0.75rem; font-size: 0.8rem; font-weight: 600; color: #475569;">Experience</th>
+              <th style="border: 1px solid #cbd5e1; padding: 0.6rem 0.75rem; font-size: 0.8rem; font-weight: 600; color: #475569;">Applied Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rowsHTML || `<tr><td colspan="7" style="text-align: center; padding: 2rem; color: var(--slate-text);">No applications submitted yet.</td></tr>`}
+          </tbody>
+        </table>
+      </div>
+    `;
   }
 
   return `
@@ -2121,6 +2178,7 @@ function getEmployerDashboardTemplate() {
               <li class="dash-menu-item ${currentTab === 'pipeline' ? 'active' : ''}" onclick="switchAdminTab('pipeline')"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 002 2h2a2 2 0 002-2"></path></svg> Candidate pipeline</li>
               <li class="dash-menu-item ${currentTab === 'post-job' ? 'active' : ''}" onclick="switchAdminTab('post-job')"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> Post New Job</li>
               <li class="dash-menu-item ${currentTab === 'manage-jobs' ? 'active' : ''}" onclick="switchAdminTab('manage-jobs')"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg> Manage Jobs</li>
+              <li class="dash-menu-item ${currentTab === 'applied-submissions' ? 'active' : ''}" onclick="switchAdminTab('applied-submissions')"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg> Applications Sheet</li>
               <li class="dash-menu-item dash-menu-logout" onclick="logoutAdmin()"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg> Logout</li>
             </ul>
           </div>
