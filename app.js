@@ -212,6 +212,45 @@ async function fetchJobsFromServer() {
   }
 }
 
+function initStatsCounterAnimation() {
+  const elements = document.querySelectorAll('.stat-number[data-target]');
+  if (elements.length === 0) return;
+
+  const observer = new IntersectionObserver((entries, observer) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const el = entry.target;
+        const target = parseInt(el.getAttribute('data-target'));
+        const suffix = el.getAttribute('data-suffix') || '';
+        const duration = 2000; // 2 seconds animation duration
+        const startTime = performance.now();
+
+        function updateCounter(currentTime) {
+          const elapsed = currentTime - startTime;
+          const progress = Math.min(elapsed / duration, 1);
+          
+          // Easing function outQuad: f(t) = t*(2-t)
+          const easeProgress = progress * (2 - progress);
+          
+          const currentValue = Math.floor(easeProgress * target);
+          el.textContent = currentValue.toLocaleString() + suffix;
+
+          if (progress < 1) {
+            requestAnimationFrame(updateCounter);
+          } else {
+            el.textContent = target.toLocaleString() + suffix;
+          }
+        }
+
+        requestAnimationFrame(updateCounter);
+        observer.unobserve(el); // Stop observing after animation completes
+      }
+    });
+  }, { threshold: 0.1 });
+
+  elements.forEach(el => observer.observe(el));
+}
+
 async function fetchApplicationsFromServer() {
   // Try loading from localStorage first (offline fallback / fast load)
   const cachedSubmissions = localStorage.getItem('galaxy_applied_submissions');
@@ -794,6 +833,7 @@ function renderActiveView() {
   switch (AppState.currentPage) {
     case 'home':
       mainContent.innerHTML = getHomeTemplate();
+      initStatsCounterAnimation();
       break;
     case 'about':
       mainContent.innerHTML = getAboutTemplate();
@@ -1070,19 +1110,19 @@ function getHomeTemplate() {
         <div class="stats-grid grid-4" style="margin-bottom: var(--spacing-lg);">
           <div class="dot-grid"></div>
           <div class="stat-item">
-            <div class="stat-number">5,000+</div>
+            <div class="stat-number" data-target="5000" data-suffix="+">0</div>
             <div class="stat-label">Candidates Placed</div>
           </div>
           <div class="stat-item">
-            <div class="stat-number">300+</div>
+            <div class="stat-number" data-target="300" data-suffix="+">0</div>
             <div class="stat-label">Partner Corporations</div>
           </div>
           <div class="stat-item">
-            <div class="stat-number">95%</div>
+            <div class="stat-number" data-target="95" data-suffix="%">0</div>
             <div class="stat-label">Client Satisfaction</div>
           </div>
           <div class="stat-item animate-stat-pulse">
-            <div class="stat-number">100+</div>
+            <div class="stat-number" data-target="100" data-suffix="+">0</div>
             <div class="stat-label">Success Stories</div>
           </div>
         </div>
