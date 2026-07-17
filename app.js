@@ -491,24 +491,14 @@ function handleJobApplicationSubmit(event) {
     
     showNotification(`Applied successfully for ${job.title}!`);
     
-    // Generate WhatsApp URL
-    const message = `Hello, I'd like to apply for the job:\n\n*Job:* ${job.title}\n*Company:* ${job.company}\n*Salary:* ${job.salary}\n*Location:* ${job.location}\n\n*Candidate Details:*\n- *Name:* ${name}\n- *Email:* ${email}\n- *Phone:* ${phone}\n- *Location:* ${location}\n- *Experience:* ${experience}`;
-    const whatsappUrl = `https://api.whatsapp.com/send?phone=918589026612&text=${encodeURIComponent(message)}`;
-    
     setTimeout(() => {
-      window.location.href = whatsappUrl;
       closeResumeUploadModal();
       navigateTo('jobs');
     }, 1000);
   } else {
     showNotification("General application submitted!");
     
-    // Generate General WhatsApp URL
-    const message = `Hello, I'd like to submit a general job application.\n\n*Candidate Details:*\n- *Name:* ${name}\n- *Email:* ${email}\n- *Phone:* ${phone}\n- *Location:* ${location}\n- *Experience:* ${experience}`;
-    const whatsappUrl = `https://api.whatsapp.com/send?phone=918589026612&text=${encodeURIComponent(message)}`;
-    
     setTimeout(() => {
-      window.location.href = whatsappUrl;
       closeResumeUploadModal();
     }, 1000);
   }
