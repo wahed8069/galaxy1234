@@ -210,6 +210,28 @@ async function fetchJobsFromServer() {
   }
 }
 
+async function fetchApplicationsFromServer() {
+  if (!ADMIN_SESSION_TOKEN) return;
+  try {
+    const res = await fetch('/api/applications', {
+      headers: {
+        'Authorization': `Bearer ${ADMIN_SESSION_TOKEN}`
+      }
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (data && Array.isArray(data)) {
+        AppState.appliedSubmissions = data;
+        if (AppState.currentPage === 'employer-dashboard' && AppState.adminActiveTab === 'applied-submissions') {
+          renderActiveView();
+        }
+      }
+    }
+  } catch (err) {
+    console.error("Failed to load applications from backend:", err);
+  }
+}
+
 const BLOGS_DATABASE = [
   { id: 1, title: 'Navigating the Golden Visa: Europe Job Market Insights', category: 'Market', date: 'June 18, 2026', readTime: '5 min read', excerpt: 'Understand how the updated Golden Visa rules in Europe impact professional recruitment and open new residency pathways.', author: 'Fatima Al-Suwaidi', icon: '🔑' },
   { id: 2, title: 'How to Optimize Your CV for Applicant Tracking Systems', category: 'Tips', date: 'May 29, 2026', readTime: '4 min read', excerpt: 'Europe companies rely heavily on AI scanning tools. Learn how to format and inject key parameters to pass structural candidate filters.', author: 'John Davis', icon: '📝' },
@@ -468,6 +490,29 @@ function handleJobApplicationSubmit(event) {
     jobTitle: jobTitle,
     experience: experience,
     date: new Date().toISOString().split('T')[0]
+  });
+
+  // Post to backend database
+  fetch('/api/applications', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      name,
+      email,
+      phone,
+      location,
+      jobTitle,
+      experience
+    })
+  })
+  .then(res => res.json())
+  .then(data => {
+    console.log("Application saved to backend:", data);
+  })
+  .catch(err => {
+    console.error("Failed to save application to backend:", err);
   });
   
   if (AppState.activeJobToApply) {
@@ -1578,6 +1623,7 @@ async function handleAdminLoginSubmit(event) {
         localStorage.setItem('admin_token', data.token);
         showNotification("Admin authenticated successfully!");
         closeAdminLoginModal();
+        fetchApplicationsFromServer();
         navigateToEmployerDashboard();
         return;
       } else {
@@ -1595,6 +1641,7 @@ async function handleAdminLoginSubmit(event) {
       localStorage.setItem('admin_token', ADMIN_SESSION_TOKEN);
       showNotification("Authenticated successfully (Client-side fallback)!");
       closeAdminLoginModal();
+      fetchApplicationsFromServer();
       navigateToEmployerDashboard();
     } else {
       errorMsg.textContent = "Invalid username or password.";
@@ -2023,6 +2070,9 @@ function navigateToEmployerDashboard() {
 
 function switchAdminTab(tabName) {
   AppState.adminActiveTab = tabName;
+  if (tabName === 'applied-submissions') {
+    fetchApplicationsFromServer();
+  }
   navigateToEmployerDashboard();
 }
 
@@ -2312,6 +2362,9 @@ document.addEventListener('DOMContentLoaded', () => {
   
   // Try fetching fresh data from backend
   fetchJobsFromServer();
+  if (ADMIN_SESSION_TOKEN) {
+    fetchApplicationsFromServer();
+  }
   
   // Listen header scroll class
   window.addEventListener('scroll', () => {
