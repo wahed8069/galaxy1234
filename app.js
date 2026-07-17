@@ -211,6 +211,16 @@ async function fetchJobsFromServer() {
 }
 
 async function fetchApplicationsFromServer() {
+  // Try loading from localStorage first (offline fallback / fast load)
+  const cachedSubmissions = localStorage.getItem('galaxy_applied_submissions');
+  if (cachedSubmissions) {
+    try {
+      AppState.appliedSubmissions = JSON.parse(cachedSubmissions);
+    } catch (e) {
+      console.error("Error parsing cached submissions:", e);
+    }
+  }
+
   if (!ADMIN_SESSION_TOKEN) return;
   try {
     const res = await fetch('/api/applications', {
@@ -222,6 +232,7 @@ async function fetchApplicationsFromServer() {
       const data = await res.json();
       if (data && Array.isArray(data)) {
         AppState.appliedSubmissions = data;
+        localStorage.setItem('galaxy_applied_submissions', JSON.stringify(data));
         if (AppState.currentPage === 'employer-dashboard' && AppState.adminActiveTab === 'applied-submissions') {
           renderActiveView();
         }
@@ -343,7 +354,7 @@ const AppState = {
     { id: 104, name: 'Leila Farooq', role: 'Financial Analyst', stage: 'Interview', date: '2026-06-18' },
     { id: 105, name: 'Robert Blake', role: 'Petroleum Geologist', stage: 'Placed', date: '2026-06-15' }
   ],
-  appliedSubmissions: [
+  appliedSubmissions: JSON.parse(localStorage.getItem('galaxy_applied_submissions')) || [
     {
       id: 201,
       name: 'Tariq Mahmood',
@@ -377,7 +388,7 @@ const AppState = {
   ],
   activeJobToApply: null,
   activeCarouselIndex: 0,
-  adminActiveTab: 'pipeline'
+  adminActiveTab: localStorage.getItem('admin_active_tab') || 'pipeline'
 };
 
 // --- CLIENT-SIDE ROUTER ---
@@ -491,6 +502,7 @@ function handleJobApplicationSubmit(event) {
     experience: experience,
     date: new Date().toISOString().split('T')[0]
   });
+  localStorage.setItem('galaxy_applied_submissions', JSON.stringify(AppState.appliedSubmissions));
 
   // Post to backend database
   fetch('/api/applications', {
@@ -2070,6 +2082,7 @@ function navigateToEmployerDashboard() {
 
 function switchAdminTab(tabName) {
   AppState.adminActiveTab = tabName;
+  localStorage.setItem('admin_active_tab', tabName);
   if (tabName === 'applied-submissions') {
     fetchApplicationsFromServer();
   }
